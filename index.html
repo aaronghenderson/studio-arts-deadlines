@@ -710,13 +710,13 @@
 (function() {
   const PW = 'delanie';
   const SESSION_KEY = 'chair_unlocked';
-  const lockScreen = document.getElementById('lock-screen');
 
   function unlock() {
     const val = document.getElementById('lock-input').value;
     if (val === PW) {
       sessionStorage.setItem(SESSION_KEY, '1');
-      lockScreen.classList.remove('visible');
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
     } else {
       const input = document.getElementById('lock-input');
       document.getElementById('lock-error').textContent = 'Incorrect password.';
@@ -727,13 +727,20 @@
   }
   window.unlock = unlock;
 
-  if (!sessionStorage.getItem(SESSION_KEY)) {
-    lockScreen.classList.add('visible');
-    setTimeout(() => document.getElementById('lock-input').focus(), 50);
-  }
+  window.addEventListener('DOMContentLoaded', function() {
+    if (sessionStorage.getItem(SESSION_KEY)) {
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+    } else {
+      document.getElementById('lock-screen').style.display = 'flex';
+      document.getElementById('main-content').style.display = 'none';
+      setTimeout(() => document.getElementById('lock-input').focus(), 50);
+    }
+  });
 })();
 </script>
 
+<div id="main-content" style="display:none;">
 <header>
   <h1>
     <span>University of Pittsburgh · Studio Arts</span>
@@ -1541,5 +1548,6 @@ renderCards();
   document.querySelector('.timeline-scroll').scrollLeft = scrollTo;
 })();
 </script>
+</div><!-- end main-content -->
 </body>
 </html>
