@@ -749,7 +749,7 @@ function exportCSV() {
   const rows=tasks.map(t=>[t.id,t.person||'Chair',t.title,t.month,t.day,t.dayLabel,t.recurrence,(t.tags||[]).join(';'),t.notes||'',t.thisYearDate||'',JSON.stringify(t.links||[]),JSON.stringify(t.history||[])].map(escapeCSV).join(','));
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([[headers.join(','),...rows].join('\n')],{type:'text/csv'}));
-  a.download='chair-deadlines-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
+  a.download='studio-arts-deadlines-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
 }
 function importCSV(event) {
   const file=event.target.files[0]; if(!file) return;
