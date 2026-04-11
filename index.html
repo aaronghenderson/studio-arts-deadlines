@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Department Chair — Deadline Tracker</title>
+<title>Deadline Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -16,461 +16,179 @@
     --gold: #c99b4a;
     --muted: #7a7062;
     --card-bg: #faf7f2;
+    /* Person colors */
+    --chair: #b85c2a;
+    --erin: #4a7ab8;
+    --connie: #6a9e5a;
+    --krystina: #9a5ab8;
+    --amanda: #b8885a;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: 'DM Mono', monospace; min-height: 100vh; }
 
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-  }
-
-  /* LOCK SCREEN */
+  /* LOCK */
   #lock-screen {
-    position: fixed;
-    inset: 0;
-    background: #1a1714;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 20px;
+    position: fixed; inset: 0; background: #1a1714; z-index: 9999;
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px;
   }
-
-  #lock-screen h2 {
-    font-family: 'DM Serif Display', serif;
-    color: #f5f0e8;
-    font-size: 1.6rem;
-  }
-
-  #lock-subtitle {
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #7a7062;
-    margin-top: -12px;
-  }
-
+  #lock-screen h2 { font-family: 'DM Serif Display', serif; color: #f5f0e8; font-size: 1.6rem; }
+  #lock-subtitle { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #7a7062; margin-top: -12px; }
   #lock-input {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
-    background: #2a2520;
-    border: 1.5px solid #3a3530;
-    color: #f5f0e8;
-    padding: 12px 20px;
-    text-align: center;
-    width: 220px;
-    letter-spacing: 0.15em;
-    outline: none;
-    transition: border-color 0.15s;
+    font-family: 'DM Mono', monospace; font-size: 0.9rem; background: #2a2520;
+    border: 1.5px solid #3a3530; color: #f5f0e8; padding: 12px 20px;
+    text-align: center; width: 220px; letter-spacing: 0.15em; outline: none; transition: border-color 0.15s;
   }
-
   #lock-input:focus { border-color: #b85c2a; }
-
-  #lock-input.shake {
-    border-color: #b83030;
-    animation: shake 0.3s ease;
-  }
-
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
-  }
-
+  #lock-input.shake { border-color: #b83030; animation: shake 0.3s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
   #lock-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 10px 28px;
-    background: #b85c2a;
-    border: none;
-    color: white;
-    cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 10px 28px; background: #b85c2a; border: none; color: white; cursor: pointer;
   }
-
   #lock-btn:hover { background: #9a4a20; }
+  #lock-error { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: #b83030; min-height: 16px; }
 
-  #lock-error {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    color: #b83030;
-    min-height: 16px;
-  }
-
-  /* MAIN APP */
+  /* APP */
   #app { display: none; }
 
   /* HEADER */
   header {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 28px 40px 24px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
+    background: var(--ink); color: var(--paper); padding: 24px 40px 20px;
+    display: flex; align-items: flex-end; justify-content: space-between;
     border-bottom: 3px solid var(--accent);
   }
-
-  header h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.9rem;
-    letter-spacing: 0.01em;
-    line-height: 1.1;
-  }
-
-  header h1 span {
-    display: block;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--rule);
-    font-weight: 300;
-    margin-bottom: 4px;
-  }
-
+  header h1 { font-family: 'DM Serif Display', serif; font-size: 1.7rem; letter-spacing: 0.01em; line-height: 1.1; }
+  header h1 span { display: block; font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--rule); font-weight: 300; margin-bottom: 4px; }
   .header-actions { display: flex; gap: 10px; }
-
-  .btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 8px 16px;
-    border: 1.5px solid var(--rule);
-    background: transparent;
-    color: var(--paper);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
+  .btn { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 7px 14px; border: 1.5px solid var(--rule); background: transparent; color: var(--paper); cursor: pointer; transition: all 0.15s; }
   .btn:hover { background: var(--accent); border-color: var(--accent); }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
   .btn.primary:hover { background: #9a4a20; }
 
+  /* PERSON FILTER BAR */
+  #person-bar {
+    background: var(--ink); padding: 0 40px 16px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .person-label { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  .person-btn {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 5px 12px; border: 1.5px solid #3a3530;
+    background: transparent; color: #888; cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .person-btn .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .person-btn:hover { border-color: #888; color: var(--paper); }
+  .person-btn.active { color: var(--paper); }
+  .person-btn[data-person="all"].active { border-color: var(--rule); background: #2a2520; }
+  .person-btn[data-person="Chair"].active { border-color: var(--chair); background: rgba(184,92,42,0.2); }
+  .person-btn[data-person="Erin"].active { border-color: var(--erin); background: rgba(74,122,184,0.2); }
+  .person-btn[data-person="Connie"].active { border-color: var(--connie); background: rgba(106,158,90,0.2); }
+  .person-btn[data-person="Krystina"].active { border-color: var(--krystina); background: rgba(154,90,184,0.2); }
+  .person-btn[data-person="Amanda"].active { border-color: var(--amanda); background: rgba(184,136,90,0.2); }
+
   /* TIMELINE */
-  #timeline-section { padding: 36px 40px 0; }
-
-  .section-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 14px;
-  }
-
+  #timeline-section { padding: 30px 40px 0; }
+  .section-label { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
   .timeline-scroll { overflow-x: auto; padding-bottom: 8px; }
-
-  .timeline {
-    display: flex;
-    align-items: flex-start;
-    min-width: max-content;
-    position: relative;
-    padding: 0 0 20px;
-  }
-
-  .timeline-axis {
-    position: absolute;
-    top: 46px; left: 0; right: 0;
-    height: 2px;
-    background: var(--rule);
-    z-index: 0;
-  }
-
-  .today-marker {
-    position: absolute;
-    top: 30px;
-    width: 2px;
-    height: 32px;
-    background: var(--gold);
-    z-index: 3;
-  }
-
-  .today-marker::before {
-    content: 'TODAY';
-    position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.48rem;
-    letter-spacing: 0.14em;
-    color: var(--gold);
-    white-space: nowrap;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .month-group {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    position: relative;
-    z-index: 1;
-    border-left: 1px solid var(--rule);
-    padding-bottom: 10px;
-  }
-
-  .month-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0 0 8px 8px;
-    width: 100%;
-  }
-
-  .month-label {
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  .month-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--rule);
-    border: 2px solid var(--paper);
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
+  .timeline { display: flex; align-items: flex-start; min-width: max-content; position: relative; padding: 0 0 20px; }
+  .timeline-axis { position: absolute; top: 46px; left: 0; right: 0; height: 2px; background: var(--rule); z-index: 0; }
+  .today-marker { position: absolute; top: 30px; width: 2px; height: 32px; background: var(--gold); z-index: 3; }
+  .today-marker::before { content: 'TODAY'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 0.45rem; letter-spacing: 0.14em; color: var(--gold); white-space: nowrap; font-family: 'DM Mono', monospace; }
+  .month-group { display: flex; flex-direction: column; align-items: flex-start; position: relative; z-index: 1; border-left: 1px solid var(--rule); padding-bottom: 10px; }
+  .month-header { display: flex; align-items: center; gap: 6px; padding: 0 0 8px 8px; width: 100%; }
+  .month-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .month-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); border: 2px solid var(--paper); flex-shrink: 0; margin-top: 1px; }
   .month-dot.has-items { background: var(--accent); }
   .month-dot.current { background: var(--gold); box-shadow: 0 0 0 3px rgba(201,155,74,0.25); }
-
   .month-weeks { display: flex; align-items: flex-start; }
-
-  .week-col {
-    width: 140px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
+  .week-col { width: 140px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
   .week-tick { width: 1px; height: 10px; background: var(--rule); }
-
-  .week-label {
-    font-size: 0.5rem;
-    letter-spacing: 0.08em;
-    color: var(--rule);
-    text-transform: uppercase;
-    margin: 2px 0 6px;
-  }
-
-  .week-pills {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 100%;
-    padding: 0 4px;
-  }
-
+  .week-label { font-size: 0.48rem; letter-spacing: 0.08em; color: var(--rule); text-transform: uppercase; margin: 2px 0 6px; }
+  .week-pills { display: flex; flex-direction: column; gap: 4px; width: 100%; padding: 0 4px; }
   .timeline-pill {
-    font-size: 0.62rem;
-    background: var(--card-bg);
-    border: 1.5px solid var(--rule);
-    border-left: 3px solid var(--accent);
-    padding: 4px 7px;
-    cursor: pointer;
-    width: 100%;
-    white-space: normal;
-    line-height: 1.4;
-    transition: all 0.15s;
+    font-size: 0.58rem; background: var(--card-bg); border: 1.5px solid var(--rule);
+    border-left: 3px solid var(--accent); padding: 3px 6px; cursor: pointer;
+    width: 100%; white-space: normal; line-height: 1.35; transition: all 0.15s;
   }
-
-  .timeline-pill:hover { border-color: var(--accent); background: var(--accent-light); transform: translateX(2px); }
+  .timeline-pill:hover { background: var(--accent-light); transform: translateX(2px); }
   .timeline-pill.urgent { border-left-color: #b83030; }
   .timeline-pill.soon { border-left-color: var(--gold); }
+  .timeline-pill[data-person="Chair"] { border-left-color: var(--chair); }
+  .timeline-pill[data-person="Erin"] { border-left-color: var(--erin); }
+  .timeline-pill[data-person="Connie"] { border-left-color: var(--connie); }
+  .timeline-pill[data-person="Krystina"] { border-left-color: var(--krystina); }
+  .timeline-pill[data-person="Amanda"] { border-left-color: var(--amanda); }
 
   /* CARDS */
-  #cards-section { padding: 40px 40px 60px; }
-
-  .cards-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-  }
-
-  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
-
-  .filter-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 5px 12px;
-    border: 1.5px solid var(--rule);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.12s;
-  }
-
+  #cards-section { padding: 36px 40px 60px; }
+  .cards-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-btn { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border: 1.5px solid var(--rule); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.12s; }
   .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); }
-
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-  }
-
-  .task-card {
-    background: var(--card-bg);
-    border: 1.5px solid var(--rule);
-    border-top: 4px solid var(--accent);
-    padding: 22px 22px 18px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+  .task-card { background: var(--card-bg); border: 1.5px solid var(--rule); border-top: 4px solid var(--accent); padding: 18px 20px 14px; cursor: pointer; transition: all 0.15s; }
   .task-card:hover { box-shadow: 4px 4px 0 var(--rule); transform: translate(-1px,-1px); }
   .task-card.urgent { border-top-color: #b83030; }
   .task-card.soon { border-top-color: var(--gold); }
-
-  .card-date { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .card-title { font-family: 'DM Serif Display', serif; font-size: 1.05rem; line-height: 1.3; margin-bottom: 10px; }
-  .card-meta { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-
-  .tag {
-    font-size: 0.55rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    background: var(--cream);
-    border: 1px solid var(--rule);
-    color: var(--muted);
-  }
-
-  .countdown { font-size: 0.6rem; letter-spacing: 0.08em; color: var(--muted); margin-top: 8px; }
+  .task-card[data-person="Chair"] { border-top-color: var(--chair); }
+  .task-card[data-person="Erin"] { border-top-color: var(--erin); }
+  .task-card[data-person="Connie"] { border-top-color: var(--connie); }
+  .task-card[data-person="Krystina"] { border-top-color: var(--krystina); }
+  .task-card[data-person="Amanda"] { border-top-color: var(--amanda); }
+  .card-person { font-size: 0.52rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 4px; font-weight: 500; }
+  .card-person[data-person="Chair"] { color: var(--chair); }
+  .card-person[data-person="Erin"] { color: var(--erin); }
+  .card-person[data-person="Connie"] { color: var(--connie); }
+  .card-person[data-person="Krystina"] { color: var(--krystina); }
+  .card-person[data-person="Amanda"] { color: var(--amanda); }
+  .card-date { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .card-title { font-family: 'DM Serif Display', serif; font-size: 1rem; line-height: 1.3; margin-bottom: 8px; }
+  .card-meta { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  .tag { font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; background: var(--cream); border: 1px solid var(--rule); color: var(--muted); }
+  .countdown { font-size: 0.58rem; letter-spacing: 0.06em; color: var(--muted); margin-top: 6px; }
   .countdown.urgent { color: #b83030; font-weight: 500; }
   .countdown.soon { color: #8a6f20; }
-  .card-links-preview { margin-top: 10px; font-size: 0.6rem; color: var(--muted); }
+  .card-links-preview { margin-top: 8px; font-size: 0.58rem; color: var(--muted); }
+  .no-tasks { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 0.8rem; }
 
   /* MODALS */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(26,23,20,0.7);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,23,20,0.7); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--card-bg);
-    border: 2px solid var(--ink);
-    border-top: 6px solid var(--accent);
-    max-width: 600px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 32px;
-    position: relative;
-    animation: modalIn 0.18s ease;
-  }
-
-  @keyframes modalIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .modal-close {
-    position: absolute; top: 16px; right: 18px;
-    background: none; border: none; font-size: 1.2rem; cursor: pointer;
-    color: var(--muted); font-family: 'DM Mono', monospace;
-  }
-
+  .modal { background: var(--card-bg); border: 2px solid var(--ink); border-top: 6px solid var(--accent); max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 30px; position: relative; animation: modalIn 0.18s ease; }
+  @keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--muted); font-family: 'DM Mono', monospace; }
   .modal-close:hover { color: var(--ink); }
-
-  .modal h2 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin-bottom: 6px; }
-  .modal-date-row { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
-  .modal-section { margin-bottom: 22px; }
-
-  .modal-section-label {
-    font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 8px; border-bottom: 1px solid var(--rule); padding-bottom: 4px;
-  }
-
-  .modal-section textarea,
-  .modal-section input[type="text"],
-  .modal-section input[type="date"] {
-    width: 100%;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.78rem;
-    background: var(--paper);
-    border: 1.5px solid var(--rule);
-    padding: 10px 12px;
-    color: var(--ink);
-    resize: vertical;
-    line-height: 1.6;
-  }
-
+  .modal h2 { font-family: 'DM Serif Display', serif; font-size: 1.4rem; margin-bottom: 4px; }
+  .modal-date-row { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+  .modal-section { margin-bottom: 20px; }
+  .modal-section-label { font-size: 0.56rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; border-bottom: 1px solid var(--rule); padding-bottom: 3px; }
+  .modal-section textarea, .modal-section input[type="text"], .modal-section input[type="date"] { width: 100%; font-family: 'DM Mono', monospace; font-size: 0.75rem; background: var(--paper); border: 1.5px solid var(--rule); padding: 9px 11px; color: var(--ink); resize: vertical; line-height: 1.6; }
   .modal-section textarea:focus, .modal-section input:focus { outline: none; border-color: var(--accent); }
-
-  .links-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-
-  .link-item {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--paper); border: 1.5px solid var(--rule); padding: 8px 12px;
-  }
-
-  .link-item a { font-size: 0.72rem; color: var(--accent); text-decoration: none; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .links-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 9px; }
+  .link-item { display: flex; align-items: center; gap: 8px; background: var(--paper); border: 1.5px solid var(--rule); padding: 7px 11px; }
+  .link-item a { font-size: 0.7rem; color: var(--accent); text-decoration: none; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .link-item a:hover { text-decoration: underline; }
-  .link-item .link-label { font-size: 0.68rem; color: var(--ink); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .link-item .link-label { font-size: 0.66rem; color: var(--ink); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .link-delete { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.8rem; flex-shrink: 0; }
   .link-delete:hover { color: #b83030; }
-
   .add-link-row { display: flex; gap: 6px; }
-  .add-link-row input {
-    flex: 1; font-family: 'DM Mono', monospace; font-size: 0.7rem;
-    background: var(--paper); border: 1.5px solid var(--rule); padding: 7px 10px; color: var(--ink);
-  }
+  .add-link-row input { flex: 1; font-family: 'DM Mono', monospace; font-size: 0.68rem; background: var(--paper); border: 1.5px solid var(--rule); padding: 6px 9px; color: var(--ink); }
   .add-link-row input:focus { outline: none; border-color: var(--accent); }
-
-  .history-entry {
-    padding: 10px 12px; background: var(--paper);
-    border: 1px solid var(--rule); border-left: 3px solid var(--gold);
-    margin-bottom: 8px; font-size: 0.72rem; line-height: 1.5;
-  }
-
-  .history-year { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
-
-  .modal-actions {
-    display: flex; gap: 10px; justify-content: flex-end;
-    margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--rule);
-  }
-
-  .btn-sm {
-    font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em;
-    text-transform: uppercase; padding: 7px 14px; border: 1.5px solid var(--rule);
-    background: transparent; color: var(--ink); cursor: pointer; transition: all 0.12s;
-  }
-
+  .history-entry { padding: 9px 11px; background: var(--paper); border: 1px solid var(--rule); border-left: 3px solid var(--gold); margin-bottom: 7px; font-size: 0.7rem; line-height: 1.5; }
+  .history-year { font-size: 0.56rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--rule); }
+  .btn-sm { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 13px; border: 1.5px solid var(--rule); background: transparent; color: var(--ink); cursor: pointer; transition: all 0.12s; }
   .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
   .btn-sm.save { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .btn-sm.save:hover { background: var(--accent); border-color: var(--accent); }
   .btn-sm.danger { color: #b83030; border-color: #b83030; }
   .btn-sm.danger:hover { background: #b83030; color: white; }
-
-  .form-row { display: flex; gap: 12px; margin-bottom: 14px; }
-  .form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; }
-  .form-group label { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
-  .form-group input, .form-group select, .form-group textarea {
-    font-family: 'DM Mono', monospace; font-size: 0.75rem;
-    background: var(--paper); border: 1.5px solid var(--rule); padding: 8px 10px; color: var(--ink);
-  }
+  .form-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .form-group label { font-size: 0.56rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .form-group input, .form-group select, .form-group textarea { font-family: 'DM Mono', monospace; font-size: 0.72rem; background: var(--paper); border: 1.5px solid var(--rule); padding: 7px 9px; color: var(--ink); }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); }
-  .no-tasks { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 0.8rem; }
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--cream); }
   ::-webkit-scrollbar-thumb { background: var(--rule); }
@@ -492,7 +210,7 @@
   <header>
     <h1>
       <span>University of Pittsburgh · Studio Arts</span>
-      Department Chair — Deadline Tracker
+      Deadline Tracker
     </h1>
     <div class="header-actions">
       <button class="btn" onclick="exportCSV()">↓ Export CSV</button>
@@ -501,8 +219,31 @@
     </div>
   </header>
 
+  <!-- PERSON FILTER -->
+  <div id="person-bar">
+    <span class="person-label">View:</span>
+    <button class="person-btn active" data-person="all" onclick="filterPerson('all',this)">
+      <span class="dot" style="background:#888"></span>All
+    </button>
+    <button class="person-btn" data-person="Chair" onclick="filterPerson('Chair',this)">
+      <span class="dot" style="background:var(--chair)"></span>Chair
+    </button>
+    <button class="person-btn" data-person="Erin" onclick="filterPerson('Erin',this)">
+      <span class="dot" style="background:var(--erin)"></span>Academic Operations
+    </button>
+    <button class="person-btn" data-person="Connie" onclick="filterPerson('Connie',this)">
+      <span class="dot" style="background:var(--connie)"></span>Scheduling
+    </button>
+    <button class="person-btn" data-person="Krystina" onclick="filterPerson('Krystina',this)">
+      <span class="dot" style="background:var(--krystina)"></span>Department Coordinator
+    </button>
+    <button class="person-btn" data-person="Amanda" onclick="filterPerson('Amanda',this)">
+      <span class="dot" style="background:var(--amanda)"></span>Finance
+    </button>
+  </div>
+
   <section id="timeline-section">
-    <div class="section-label">Annual Timeline — Academic Year</div>
+    <div class="section-label">Annual Timeline — Academic Year (Aug → Jul)</div>
     <div class="timeline-scroll">
       <div class="timeline" id="timeline">
         <div class="timeline-axis"></div>
@@ -514,15 +255,21 @@
     <div class="cards-header">
       <div class="section-label" style="margin:0">All Deadlines</div>
       <div class="filter-row">
-        <button class="filter-btn active" onclick="filterCards('all',this)">All</button>
-        <button class="filter-btn" onclick="filterCards('urgent',this)">Urgent (30 days)</button>
-        <button class="filter-btn" onclick="filterCards('soon',this)">Soon (90 days)</button>
-        <button class="filter-btn" onclick="filterCards('Jan',this)">Jan</button>
-        <button class="filter-btn" onclick="filterCards('Mar',this)">Mar</button>
-        <button class="filter-btn" onclick="filterCards('Apr',this)">Apr</button>
-        <button class="filter-btn" onclick="filterCards('May',this)">May</button>
-        <button class="filter-btn" onclick="filterCards('Jul',this)">Jul</button>
-        <button class="filter-btn" onclick="filterCards('Aug',this)">Aug</button>
+        <button class="filter-btn active" onclick="filterMonth('all',this)">All</button>
+        <button class="filter-btn" onclick="filterMonth('urgent',this)">Urgent</button>
+        <button class="filter-btn" onclick="filterMonth('soon',this)">Soon (90d)</button>
+        <button class="filter-btn" onclick="filterMonth('Aug',this)">Aug</button>
+        <button class="filter-btn" onclick="filterMonth('Sep',this)">Sep</button>
+        <button class="filter-btn" onclick="filterMonth('Oct',this)">Oct</button>
+        <button class="filter-btn" onclick="filterMonth('Nov',this)">Nov</button>
+        <button class="filter-btn" onclick="filterMonth('Dec',this)">Dec</button>
+        <button class="filter-btn" onclick="filterMonth('Jan',this)">Jan</button>
+        <button class="filter-btn" onclick="filterMonth('Feb',this)">Feb</button>
+        <button class="filter-btn" onclick="filterMonth('Mar',this)">Mar</button>
+        <button class="filter-btn" onclick="filterMonth('Apr',this)">Apr</button>
+        <button class="filter-btn" onclick="filterMonth('May',this)">May</button>
+        <button class="filter-btn" onclick="filterMonth('Jun',this)">Jun</button>
+        <button class="filter-btn" onclick="filterMonth('Jul',this)">Jul</button>
       </div>
     </div>
     <div class="cards-grid" id="cards-grid"></div>
@@ -532,16 +279,16 @@
   <div class="modal-overlay" id="detail-modal">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('detail-modal')">✕</button>
-      <div id="modal-urgency-bar" style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;"></div>
+      <div id="modal-urgency-bar" style="font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;"></div>
       <h2 id="modal-title"></h2>
       <div class="modal-date-row" id="modal-date"></div>
       <div class="modal-section">
         <div class="modal-section-label">This Year's Specific Date</div>
-        <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;align-items:center;gap:10px;">
           <input type="date" id="modal-this-year-date" style="flex:1;">
           <button class="btn-sm" onclick="clearThisYearDate()">Clear</button>
         </div>
-        <div style="font-size:0.62rem;color:var(--muted);margin-top:5px;">When set, countdown and timeline use this exact date. Clear once passed to revert to general month.</div>
+        <div style="font-size:0.6rem;color:var(--muted);margin-top:4px;">When set, countdown and timeline use this exact date.</div>
       </div>
       <div class="modal-section">
         <div class="modal-section-label">Notes</div>
@@ -551,7 +298,7 @@
         <div class="modal-section-label">Links & Documents</div>
         <div class="links-list" id="modal-links-list"></div>
         <div class="add-link-row">
-          <input type="text" id="new-link-label" placeholder="Label (e.g. 2024 Template)">
+          <input type="text" id="new-link-label" placeholder="Label">
           <input type="text" id="new-link-url" placeholder="URL">
           <button class="btn-sm" onclick="addLink()">Add</button>
         </div>
@@ -559,9 +306,9 @@
       <div class="modal-section">
         <div class="modal-section-label">History / Past Examples</div>
         <div id="modal-history-list"></div>
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <input type="text" id="new-history-year" placeholder="Year" style="width:90px;font-family:'DM Mono',monospace;font-size:0.7rem;background:var(--paper);border:1.5px solid var(--rule);padding:7px 10px;color:var(--ink);">
-          <input type="text" id="new-history-note" placeholder="Notes from that year..." style="flex:1;font-family:'DM Mono',monospace;font-size:0.7rem;background:var(--paper);border:1.5px solid var(--rule);padding:7px 10px;color:var(--ink);">
+        <div style="display:flex;gap:7px;margin-top:7px;">
+          <input type="text" id="new-history-year" placeholder="Year" style="width:80px;font-family:'DM Mono',monospace;font-size:0.68rem;background:var(--paper);border:1.5px solid var(--rule);padding:6px 9px;color:var(--ink);">
+          <input type="text" id="new-history-note" placeholder="Notes from that year..." style="flex:1;font-family:'DM Mono',monospace;font-size:0.68rem;background:var(--paper);border:1.5px solid var(--rule);padding:6px 9px;color:var(--ink);">
           <button class="btn-sm" onclick="addHistory()">Add</button>
         </div>
       </div>
@@ -577,49 +324,40 @@
   <div class="modal-overlay" id="add-modal">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('add-modal')">✕</button>
-      <h2 style="font-family:'DM Serif Display',serif;margin-bottom:20px;">Add New Deadline</h2>
+      <h2 style="font-family:'DM Serif Display',serif;margin-bottom:18px;">Add New Deadline</h2>
       <div class="form-row">
-        <div class="form-group" style="flex:2">
-          <label>Title</label>
-          <input type="text" id="new-title" placeholder="Deadline title">
+        <div class="form-group" style="flex:2"><label>Title</label><input type="text" id="new-title" placeholder="Deadline title"></div>
+        <div class="form-group"><label>Person</label>
+          <select id="new-person">
+            <option value="Chair">Chair</option>
+            <option value="Erin">Erin — AOM</option>
+            <option value="Connie">Connie — Scheduling</option>
+            <option value="Krystina">Krystina — DC</option>
+            <option value="Amanda">Amanda — Finance</option>
+          </select>
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label>Month</label>
+        <div class="form-group"><label>Month</label>
           <select id="new-month">
-            <option value="1">January</option><option value="2">February</option>
-            <option value="3">March</option><option value="4">April</option>
-            <option value="5">May</option><option value="6">June</option>
-            <option value="7">July</option><option value="8">August</option>
-            <option value="9">September</option><option value="10">October</option>
-            <option value="11">November</option><option value="12">December</option>
+            <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+            <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+            <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+            <option value="10">October</option><option value="11">November</option><option value="12">December</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Day (optional)</label>
-          <input type="text" id="new-day" placeholder="e.g. 15 or early">
-        </div>
-        <div class="form-group">
-          <label>Recurrence</label>
+        <div class="form-group"><label>Day / Timing</label><input type="text" id="new-day" placeholder="e.g. 15, early, end"></div>
+        <div class="form-group"><label>Recurrence</label>
           <select id="new-recurrence">
-            <option value="annual">Annual</option>
-            <option value="varies">Varies by year</option>
-            <option value="once">One-time</option>
+            <option value="annual">Annual</option><option value="varies">Varies</option><option value="once">One-time</option>
           </select>
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label>Tags (comma-separated)</label>
-          <input type="text" id="new-tags" placeholder="e.g. faculty, budget">
-        </div>
+        <div class="form-group"><label>Tags (comma-separated)</label><input type="text" id="new-tags" placeholder="e.g. faculty, budget"></div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label>Notes</label>
-          <textarea id="new-notes" rows="3" placeholder="Any context or instructions..."></textarea>
-        </div>
+        <div class="form-group"><label>Notes</label><textarea id="new-notes" rows="3" placeholder="Any context or instructions..."></textarea></div>
       </div>
       <div class="modal-actions">
         <button class="btn-sm" onclick="closeModal('add-modal')">Cancel</button>
@@ -630,36 +368,149 @@
 </div>
 
 <script>
-const STORAGE_KEY = 'chair_deadlines_v1';
+const STORAGE_KEY = 'chair_deadlines_v2';
 const ACADEMIC_MONTHS = [8,9,10,11,12,1,2,3,4,5,6,7];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 const DEFAULT_TASKS = [
-  { id:'td13', title:'Faculty Retreat', month:8, day:19, dayLabel:'19', recurrence:'varies', tags:['faculty','operations','academic'], notes:'Faculty retreat held on the Wednesday of the week before classes begin. This year: August 19. Update each year when the academic calendar is set.', links:[], history:[] },
-  { id:'td12', title:'Classes Begin', month:8, day:24, dayLabel:'24', recurrence:'varies', tags:['academic','operations'], notes:"First day of classes. Date varies slightly each year — update with this year's specific date each fall.", links:[], history:[] },
-  { id:'td1', title:'Facilities & Equipment Requests Due', month:1, day:15, dayLabel:'15', recurrence:'annual', tags:['facilities','operations'], notes:"Submit facilities and equipment requests to Dean's office. Date is fixed at Jan 15.", links:[], history:[] },
-  { id:'td2', title:'Ancillary Budgets Due', month:3, day:1, dayLabel:'early', recurrence:'annual', tags:['budget','finance'], notes:"Ancillary budget submissions due to A&S. Confirm exact date with Dean's office each year.", links:[], history:[] },
-  { id:'td3', title:'Student Exhibition Opens', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['events','exhibitions'], notes:'Annual student exhibition opening. Typically early April.', links:[], history:[] },
-  { id:'td4', title:'Send Graduation RSVPs to Students & Families', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['graduation','communications'], notes:'Send out RSVP invitations for graduation to students and their families. Must go out at least one month before graduation (typically first Saturday in May).', links:[], history:[] },
-  { id:'td5', title:'Remind Faculty About Graduation', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['graduation','faculty'], notes:'Send faculty reminder about graduation attendance, roles, and expectations.', links:[], history:[] },
-  { id:'td6', title:'Send Departmental & Faculty Activity Reports Info', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','reporting'], notes:'Send out information and instructions to faculty about upcoming departmental and faculty activity reports.', links:[], history:[] },
-  { id:'td7', title:'Faculty Actions — Promotion', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','promotion','hr'], notes:'Send out faculty actions related to promotion. Confirm exact process and deadlines with Erin/A&S.', links:[], history:[] },
-  { id:'td10', title:'Submit Departmental Report', month:5, day:1, dayLabel:'1', recurrence:'annual', tags:['reporting','operations'], notes:'Chair submits the departmental report.', links:[], history:[] },
-  { id:'td8', title:'Graduation Day & Student Exhibition Closes', month:5, day:2, dayLabel:'2', recurrence:'varies', tags:['graduation','events','exhibitions'], notes:'Graduation typically falls on the first Saturday in May. This year: May 2. Student exhibition closes same day.', links:[], history:[] },
-  { id:'td9', title:'Faculty Submit Faculty Activity Reports', month:5, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','reporting'], notes:'Deadline for faculty to submit their Faculty Activity Reports.', links:[], history:[] },
-  { id:'td11', title:'Annual Review Letters Due', month:7, day:17, dayLabel:'17', recurrence:'annual', tags:['faculty','review','hr'], notes:'Annual review letters must be sent to faculty by July 17.', links:[], history:[] }
+  // ── CHAIR ──
+  { id:'c13', person:'Chair', title:'Faculty Retreat', month:8, day:19, dayLabel:'19', recurrence:'varies', tags:['faculty','academic'], notes:'Faculty retreat held on the Wednesday of the week before classes begin. This year: August 19.', links:[], history:[] },
+  { id:'c12', person:'Chair', title:'Classes Begin', month:8, day:24, dayLabel:'24', recurrence:'varies', tags:['academic'], notes:"First day of classes. Date varies slightly each year.", links:[], history:[] },
+  { id:'c1', person:'Chair', title:'Facilities & Equipment Requests Due', month:1, day:15, dayLabel:'15', recurrence:'annual', tags:['facilities','operations'], notes:"Submit facilities and equipment requests to Dean's office. Date is fixed at Jan 15.", links:[], history:[] },
+  { id:'c2', person:'Chair', title:'Ancillary Budgets Due', month:3, day:1, dayLabel:'early', recurrence:'annual', tags:['budget','finance'], notes:"Ancillary budget submissions due to A&S. Confirm exact date with Dean's office each year.", links:[], history:[] },
+  { id:'c3', person:'Chair', title:'Student Exhibition Opens', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['events','exhibitions'], notes:'Annual student exhibition opening. Typically early April.', links:[], history:[] },
+  { id:'c4', person:'Chair', title:'Send Graduation RSVPs to Students & Families', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['graduation','communications'], notes:'Send out RSVP invitations for graduation to students and their families at least one month before graduation.', links:[], history:[] },
+  { id:'c5', person:'Chair', title:'Remind Faculty About Graduation', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['graduation','faculty'], notes:'Send faculty reminder about graduation attendance, roles, and expectations.', links:[], history:[] },
+  { id:'c6', person:'Chair', title:'Send Departmental & Faculty Activity Reports Info', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','reporting'], notes:'Send out information and instructions to faculty about upcoming departmental and faculty activity reports.', links:[], history:[] },
+  { id:'c7', person:'Chair', title:'Faculty Actions — Promotion', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','promotion','hr'], notes:'Send out faculty actions related to promotion. Confirm exact process and deadlines with Erin/A&S.', links:[], history:[] },
+  { id:'c10', person:'Chair', title:'Submit Departmental Report', month:5, day:1, dayLabel:'1', recurrence:'annual', tags:['reporting','operations'], notes:'Chair submits the departmental report.', links:[], history:[] },
+  { id:'c8', person:'Chair', title:'Graduation Day & Student Exhibition Closes', month:5, day:2, dayLabel:'2', recurrence:'varies', tags:['graduation','events'], notes:'Graduation typically falls on the first Saturday in May. This year: May 2. Student exhibition closes same day.', links:[], history:[] },
+  { id:'c9', person:'Chair', title:'Faculty Submit Faculty Activity Reports', month:5, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','reporting'], notes:'Deadline for faculty to submit their Faculty Activity Reports.', links:[], history:[] },
+  { id:'c11', person:'Chair', title:'Annual Review Letters Due', month:7, day:17, dayLabel:'17', recurrence:'annual', tags:['faculty','review','hr'], notes:'Annual review letters must be sent to faculty by July 17.', links:[], history:[] },
+
+  // ── ERIN — AOM ──
+  { id:'e1', person:'Erin', title:'Recruitment — Interviews & Campus Visits', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment','faculty'], notes:'Interviews and campus visits through the spring term.', links:[], history:[] },
+  { id:'e2', person:'Erin', title:'Appointment Stream — Promotion Cases', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Appt stream promotion cases active in January.', links:[], history:[] },
+  { id:'e3', person:'Erin', title:'Renewal for Visiting Lecturers', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Process renewals for Visiting Lecturers.', links:[], history:[] },
+  { id:'e4', person:'Erin', title:'TS Reappointments Due (3rd Year Review)', month:2, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr','tenure'], notes:'Tenure stream reappointments due — 3rd year review.', links:[], history:[] },
+  { id:'e5', person:'Erin', title:'Ancillary Budget Request Due', month:2, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Ancillary budget request due in February.', links:[], history:[] },
+  { id:'e6', person:'Erin', title:'Recruitment — Offers & Negotiations', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment','faculty'], notes:'Offers and negotiations going out for recruitment.', links:[], history:[] },
+  { id:'e7', person:'Erin', title:'Reach Out for Promotion Cases', month:3, day:1, dayLabel:'early', recurrence:'annual', tags:['promotion','faculty'], notes:'Start to reach out for promotion cases; review committees will meet in the fall.', links:[], history:[] },
+  { id:'e8', person:'Erin', title:'Tenure Promotion — Collecting Outside Evaluator Materials', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','tenure'], notes:'Collecting materials from outside evaluators for tenure promotion.', links:[], history:[] },
+  { id:'e9', person:'Erin', title:'Look at Reappointments for Next AY', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Review who needs reappointments for next academic year.', links:[], history:[] },
+  { id:'e10', person:'Erin', title:'Ancillary Budget Approval', month:3, day:1, dayLabel:'end', recurrence:'annual', tags:['budget'], notes:'Ancillary budget approval in March.', links:[], history:[] },
+  { id:'e11', person:'Erin', title:'Solicitation for Recruitment Requests (Next AY)', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:"Solicitation from Dean's office for recruitment requests for next AY.", links:[], history:[] },
+  { id:'e12', person:'Erin', title:'PTI & Overload Contracts Due for Summer', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI and overload contracts due for summer.', links:[], history:[] },
+  { id:'e13', person:'Erin', title:'Visiting Renewals Due', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Visiting faculty renewals due.', links:[], history:[] },
+  { id:'e14', person:'Erin', title:'Upload Final Packet & Hire to PC (Recruitment)', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:'Upload final packet and hire to PC for any recruitment.', links:[], history:[] },
+  { id:'e15', person:'Erin', title:"Chair's Department Report Due to Lisa Lang", month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['reporting'], notes:"Chair's department report due to Lisa Lang.", links:[], history:[] },
+  { id:'e16', person:'Erin', title:'Recruitment Requests for Next AY Due', month:6, day:1, dayLabel:'early', recurrence:'annual', tags:['recruitment'], notes:'Recruitment requests for next AY due end of May/early June.', links:[], history:[] },
+  { id:'e17', person:'Erin', title:'Supplemental Hire Request — PTI/VL/Overload (Fall)', month:6, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Supplemental request to hire PTI, VL, overload contracts for fall due for unassigned courses.', links:[], history:[] },
+  { id:'e18', person:'Erin', title:'Annual Reviews Due — Distinguished Faculty, Incoming Chairs', month:6, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','review'], notes:'Annual reviews for distinguished faculty, incoming chairs, program directors due to Lisa Lang.', links:[], history:[] },
+  { id:'e19', person:'Erin', title:'New Computers & Office Spaces for New Faculty', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','operations'], notes:'Set up new computers and office spaces for new faculty.', links:[], history:[] },
+  { id:'e20', person:'Erin', title:'TTWS: CVs for Promotion & Tenure Cases Due to Jenn Bates', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','tenure'], notes:'TTWS: CVs for promotion and tenure cases due to Jenn Bates.', links:[], history:[] },
+  { id:'e21', person:'Erin', title:'Annual Letters for Faculty Due', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','review'], notes:'Annual letters for faculty due.', links:[], history:[] },
+  { id:'e22', person:'Erin', title:'PTI Contracts Signed & Uploaded to PC', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts signed and uploaded to PC.', links:[], history:[] },
+  { id:'e23', person:'Erin', title:'Supplemental Hire Requests — PT/Overload (Fall Unassigned)', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Supplemental hire requests for PT or overload contracts for fall courses unassigned.', links:[], history:[] },
+  { id:'e24', person:'Erin', title:'Follow Up with Promotion Cases — Dept Review in Fall', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Follow up with promotion cases; dept committees review in fall.', links:[], history:[] },
+  { id:'e25', person:'Erin', title:'Collect Materials — Dept Review Committee Vote on Tenure', month:9, day:1, dayLabel:'throughout', recurrence:'annual', tags:['tenure','promotion'], notes:'Collect materials shared with dept review committee; vote on tenure promotion cases for Assistant to Associate Professor.', links:[], history:[] },
+  { id:'e26', person:'Erin', title:'Follow Up on Promotion Cases', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Follow up on promotion cases in October.', links:[], history:[] },
+  { id:'e27', person:'Erin', title:'TTS: Assistant to Associate Professor Due to Jenn Bates', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['tenure','promotion'], notes:'TTS: Assistant to Associate professor due to Jenn Bates.', links:[], history:[] },
+  { id:'e28', person:'Erin', title:'Submit Presumptive Renewal Reappointments', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Submit presumptive renewal reappointments.', links:[], history:[] },
+  { id:'e29', person:'Erin', title:'Recommendations for Renewal/Nonrenewal — FT AS Faculty (<5 yrs)', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Recommendations for renewal/nonrenewal for FT AS faculty with less than 5 years of service can be submitted.', links:[], history:[] },
+  { id:'e30', person:'Erin', title:'Finalize Promotion Materials — AS Cases', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Finalize collection of promotion materials for AS promotion cases.', links:[], history:[] },
+  { id:'e31', person:'Erin', title:'Collected Materials Shared with Committee — TTS Cases', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','tenure'], notes:'Collected materials shared with committee for TTS promotion cases.', links:[], history:[] },
+  { id:'e32', person:'Erin', title:'Sabbatical & LOA Requests Submitted to PC', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Sabbatical and LOA requests submitted to PC.', links:[], history:[] },
+  { id:'e33', person:'Erin', title:'Discuss Renewal of PTIs for Spring Term', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Discuss renewal of PTIs for spring term.', links:[], history:[] },
+  { id:'e34', person:'Erin', title:'Collect Reference Letters — Recruitment Finalists', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:'Collect letters of reference for recruitment finalists, upload to PC, make on-campus recruitment request.', links:[], history:[] },
+  { id:'e35', person:'Erin', title:'Promotion to Full Dossiers Due to Jenn Bates', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Promotion to full dossiers due to Jenn Bates.', links:[], history:[] },
+  { id:'e36', person:'Erin', title:'Recommendations for TS Assistant Professors (3rd Year)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['tenure','hr'], notes:'Recommendations for renewal of TS assistant professors completing 3rd year of service.', links:[], history:[] },
+  { id:'e37', person:'Erin', title:'PTI Contracts Uploaded to PC (December)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts should be uploaded to PC.', links:[], history:[] },
+
+  // ── CONNIE — SCHEDULING ──
+  { id:'s1', person:'Connie', title:'Spring Class Section Updates Window Opens', month:6, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'Beginning of June — the spring class section updates window opens.', links:[], history:[] },
+  { id:'s2', person:'Connie', title:'Fall Course Catalog Updates Due in Curriculog', month:6, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling','curriculog'], notes:'Third week in June — the fall course catalog updates due in Curriculog.', links:[], history:[] },
+  { id:'s3', person:'Connie', title:'Spring Update Deadline', month:7, day:1, dayLabel:'end', recurrence:'annual', tags:['scheduling'], notes:'End of July is the spring update deadline.', links:[], history:[] },
+  { id:'s4', person:'Connie', title:'Spring Room Assignments Workflow Opens', month:9, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'Third week in September the workflow opens with room assignments for spring.', links:[], history:[] },
+  { id:'s5', person:'Connie', title:'Summer Class Section Workflow Opens', month:8, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'Third week of August the summer class section workflow opens.', links:[], history:[] },
+  { id:'s6', person:'Connie', title:'Course Catalog Additions/Updates Due in Curriculog (Summer)', month:9, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling','curriculog'], notes:'At the beginning of September, the course catalog addition/updates are due in Curriculog.', links:[], history:[] },
+  { id:'s7', person:'Connie', title:'Spring Class Section Update Deadline', month:10, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'Third week in October the spring class section update deadline.', links:[], history:[] },
+  { id:'s8', person:'Connie', title:'Summer Room Assignments Workflow Opens', month:11, day:1, dayLabel:'end', recurrence:'annual', tags:['scheduling'], notes:'At the end of November, the workflow opens with room assignments for summer.', links:[], history:[] },
+  { id:'s9', person:'Connie', title:'Fall Class Section Workflow Opens', month:11, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'At the beginning of November, the fall class section workflow opens.', links:[], history:[] },
+  { id:'s10', person:'Connie', title:'Course Catalog Updates Due in Curriculog (Fall)', month:12, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling','curriculog'], notes:'Beginning of December, the course catalog updates are due in Curriculog.', links:[], history:[] },
+  { id:'s11', person:'Connie', title:'Fall Class Section Update Deadline', month:1, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'At the beginning of January is the class section update deadline.', links:[], history:[] },
+  { id:'s12', person:'Connie', title:'Fall Room Assignments Workflow Opens', month:2, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'On the third week in February the class section workflow opens with room assignments.', links:[], history:[] },
+
+  // ── KRYSTINA — DC ──
+  { id:'k1', person:'Krystina', title:'Recruitment — Arranging Campus Visits', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:'Arranging campus visits for recruitment.', links:[], history:[] },
+  { id:'k2', person:'Krystina', title:'Prep & Planning for Graduation', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['graduation'], notes:'Graduation prep and planning begins in January and continues through May.', links:[], history:[] },
+  { id:'k3', person:'Krystina', title:'Prep & Planning for Senior Exhibition', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Senior exhibition prep and planning begins in January.', links:[], history:[] },
+  { id:'k4', person:'Krystina', title:'Swipe Access — Returning Students & Majors (Spring)', month:1, day:1, dayLabel:'W1', recurrence:'annual', tags:['operations','students'], notes:'Swipe access given to returning students and majors first week of term; new students receive access after.', links:[], history:[] },
+  { id:'k5', person:'Krystina', title:'Ancillary Budget Planning', month:2, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Requires chair, DC, AOM, fiscal, AO, and scheduler/DUG to complete.', links:[], history:[] },
+  { id:'k6', person:'Krystina', title:'PTI Reappointments for Next AY', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI reappointments for next academic year.', links:[], history:[] },
+  { id:'k7', person:'Krystina', title:'Request Judges for Senior Exhibition', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Request judges for senior exhibition.', links:[], history:[] },
+  { id:'k8', person:'Krystina', title:'Schedule Judges for Senior Exhibition', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Schedule judges for senior exhibition.', links:[], history:[] },
+  { id:'k9', person:'Krystina', title:'PTI & Overload Contracts Due for Summer', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI and overload contracts due for summer.', links:[], history:[] },
+  { id:'k10', person:'Krystina', title:'Ancillary Budget Approval', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Ancillary budget approval in April.', links:[], history:[] },
+  { id:'k11', person:'Krystina', title:'Locker Cleanout', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['operations'], notes:'Annual locker cleanout.', links:[], history:[] },
+  { id:'k12', person:'Krystina', title:'Department Graduation', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['graduation'], notes:'Department graduation ceremony.', links:[], history:[] },
+  { id:'k13', person:'Krystina', title:'Finalize Senior Exhibition Prep', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Finalize senior exhibition prep and planning.', links:[], history:[] },
+  { id:'k14', person:'Krystina', title:'Supplemental Hire Request — PTI/VL/Overload (Fall)', month:6, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Supplemental request to hire PTI, VL, overload contracts for fall due for unassigned courses.', links:[], history:[] },
+  { id:'k15', person:'Krystina', title:'New Computers & Office Spaces for New Faculty', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','operations'], notes:'Set up new computers and office spaces for new faculty.', links:[], history:[] },
+  { id:'k16', person:'Krystina', title:'Annual Letters for Faculty — Upload to PC', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','review'], notes:'Annual letters for faculty due; upload to PC.', links:[], history:[] },
+  { id:'k17', person:'Krystina', title:'PTI Contracts Signed & Uploaded to PC (by July 15)', month:7, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts signed and uploaded to PC by July 15.', links:[], history:[] },
+  { id:'k18', person:'Krystina', title:'Fall Memo Drafting & Collaboration', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['communications'], notes:'Fall memo drafting and collaboration — to be sent ~1 month before start of term.', links:[], history:[] },
+  { id:'k19', person:'Krystina', title:'Faculty Office Location & Hours Survey', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','operations'], notes:'Faculty office location and hours survey.', links:[], history:[] },
+  { id:'k20', person:'Krystina', title:'Swipe Access — Returning Students & Majors (Fall)', month:8, day:1, dayLabel:'W1', recurrence:'annual', tags:['operations','students'], notes:'Swipe access given to returning students and majors first week of term; new students receive access after.', links:[], history:[] },
+  { id:'k21', person:'Krystina', title:'Prep & Planning for Fall Festival', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['events'], notes:'Fall Festival prep and planning begins in August and runs through December.', links:[], history:[] },
+  { id:'k22', person:'Krystina', title:'Benching/Nonrenewal Notices Sent', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Benching/nonrenewal notices sent in October.', links:[], history:[] },
+  { id:'k23', person:'Krystina', title:'Presumptive Renewal Reappointments', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Presumptive renewal reappointments processed in October.', links:[], history:[] },
+  { id:'k24', person:'Krystina', title:'Ancillary Budget Reporting', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Ancillary budget reporting in October.', links:[], history:[] },
+  { id:'k25', person:'Krystina', title:'Discuss Renewal of PTIs for Spring Semester', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Discuss renewal of PTIs for spring semester.', links:[], history:[] },
+  { id:'k26', person:'Krystina', title:'PTI Contracts Drafted (Spring)', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts drafted for spring semester.', links:[], history:[] },
+  { id:'k27', person:'Krystina', title:'Finalize Fall Festival Prep', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['events'], notes:'Finalize Fall Festival prep and planning.', links:[], history:[] },
+  { id:'k28', person:'Krystina', title:'PTI Contracts Signed & Uploaded to PC (December)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts signed and uploaded to PC.', links:[], history:[] },
+  { id:'k29', person:'Krystina', title:'Swipe Access Removed from Students (After Finals)', month:12, day:1, dayLabel:'end', recurrence:'annual', tags:['operations','students'], notes:'Swipe access removed from students following finals week.', links:[], history:[] },
+  { id:'k30', person:'Krystina', title:'Spring Memo Drafting & Collaboration', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['communications'], notes:'Spring memo drafting and collaboration — to be sent prior to winter break.', links:[], history:[] },
+
+  // ── AMANDA — FINANCE ──
+  { id:'a1', person:'Amanda', title:'Last Date for Items Ordered (Fiscal Year)', month:6, day:1, dayLabel:'1', recurrence:'annual', tags:['budget','finance'], notes:'The last date for items to be ordered for the fiscal year will be June 1st. Not applicable to fall ordering or quick picks for summer.', links:[], history:[] },
+  { id:'a2', person:'Amanda', title:'Guest Speaker Lead Time (1 Month)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'1 month lead time needed for guest speakers. Plan accordingly.', links:[], history:[] },
+  { id:'a3', person:'Amanda', title:'Service Agreement Lead Time (2 Months)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'2 month lead time needed for service agreements. Plan accordingly.', links:[], history:[] },
+  { id:'a4', person:'Amanda', title:'SA Purchases Lead Time (1.5 Months)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'1.5 month lead time needed for SA purchases. Plan accordingly.', links:[], history:[] }
 ];
 
 let tasks = [];
 let currentTaskId = null;
-let currentFilter = 'all';
+let currentMonthFilter = 'all';
+let currentPersonFilter = new Set(['all']);
 
-// ── PASSWORD ──────────────────────────────────────────────────────────
+// ── FILTERS ───────────────────────────────────────────────────────────
+function filterPerson(p, btn) {
+  if (p === 'all') {
+    currentPersonFilter = new Set(['all']);
+    document.querySelectorAll('.person-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  } else {
+    currentPersonFilter.delete('all');
+    document.querySelector('.person-btn[data-person="all"]').classList.remove('active');
+    if (currentPersonFilter.has(p)) {
+      currentPersonFilter.delete(p);
+      btn.classList.remove('active');
+      if (currentPersonFilter.size === 0) {
+        currentPersonFilter.add('all');
+        document.querySelector('.person-btn[data-person="all"]').classList.add('active');
+      }
+    } else {
+      currentPersonFilter.add(p);
+      btn.classList.add('active');
+    }
+  }
+  renderTimeline(); renderCards();
+}
 (function() {
-  const PW = 'delanie';
-  const KEY = 'chair_session_ok';
-
+  const PW = 'delanie', KEY = 'chair_session_ok';
   function tryUnlock() {
     const val = document.getElementById('lock-input').value;
     if (val === PW) {
@@ -670,15 +521,12 @@ let currentFilter = 'all';
     } else {
       document.getElementById('lock-error').textContent = 'Incorrect password.';
       const inp = document.getElementById('lock-input');
-      inp.value = '';
-      inp.classList.add('shake');
+      inp.value = ''; inp.classList.add('shake');
       setTimeout(() => inp.classList.remove('shake'), 400);
     }
   }
-
   document.getElementById('lock-btn').addEventListener('click', tryUnlock);
-  document.getElementById('lock-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
-
+  document.getElementById('lock-input').addEventListener('keydown', e => { if(e.key==='Enter') tryUnlock(); });
   if (sessionStorage.getItem(KEY)) {
     document.getElementById('lock-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
@@ -690,27 +538,23 @@ let currentFilter = 'all';
 
 // ── DATA ──────────────────────────────────────────────────────────────
 function loadTasks() {
-  try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e) {}
+  try { const r = localStorage.getItem(STORAGE_KEY); if(r) return JSON.parse(r); } catch(e) {}
   return JSON.parse(JSON.stringify(DEFAULT_TASKS));
 }
-
-function saveTasks(t) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(t)); } catch(e) {}
-}
+function saveTasks(t) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(t)); } catch(e) {} }
 
 // ── UTILITIES ─────────────────────────────────────────────────────────
 function getTargetDate(task) {
   if (task.thisYearDate) {
-    const d = new Date(task.thisYearDate + 'T00:00:00');
-    if (Math.ceil((d - new Date()) / 86400000) > -7) return d;
+    const d = new Date(task.thisYearDate+'T00:00:00');
+    if (Math.ceil((d-new Date())/86400000) > -7) return d;
   }
   const now = new Date();
-  const yr = (now.getMonth()+1 > task.month || (now.getMonth()+1 === task.month && now.getDate() > (task.day||1)))
+  const yr = (now.getMonth()+1 > task.month || (now.getMonth()+1===task.month && now.getDate()>(task.day||1)))
     ? now.getFullYear()+1 : now.getFullYear();
   return new Date(yr, task.month-1, task.day||1);
 }
-
-function getDaysUntil(task) { return Math.ceil((getTargetDate(task) - new Date()) / 86400000); }
+function getDaysUntil(task) { return Math.ceil((getTargetDate(task)-new Date())/86400000); }
 function urgencyClass(task) { const d=getDaysUntil(task); return d<=30?'urgent':d<=90?'soon':''; }
 function countdownLabel(task) {
   const d=getDaysUntil(task);
@@ -718,185 +562,161 @@ function countdownLabel(task) {
   if(d<0) return Math.abs(d)+' days ago'; return d+' days away';
 }
 function formatDate(task) {
-  if (task.thisYearDate) {
-    const d = new Date(task.thisYearDate+'T00:00:00');
-    return d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+' (this year)';
-  }
-  const mn = MONTHS_FULL[task.month-1];
-  return (!task.day||task.dayLabel==='early') ? mn+' — early month' : mn+' '+task.dayLabel;
+  if(task.thisYearDate) { const d=new Date(task.thisYearDate+'T00:00:00'); return d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+' (this year)'; }
+  const mn=MONTHS_FULL[task.month-1];
+  return (!task.day||['early','throughout','ongoing','end','W1','W2','W3','W4'].includes(task.dayLabel)) ? mn+' — '+task.dayLabel : mn+' '+task.dayLabel;
 }
 function dayToWeek(day) { if(!day||day<=7) return 0; if(day<=14) return 1; if(day<=21) return 2; return 3; }
 function taskWeek(task) {
   if(task.thisYearDate) return dayToWeek(new Date(task.thisYearDate+'T00:00:00').getDate());
-  if(task.dayLabel==='early'||!task.day) return 0;
+  const dl = task.dayLabel||'';
+  if(dl==='W1'||dl==='early'||dl==='ongoing') return 0;
+  if(dl==='W2') return 1;
+  if(dl==='W3') return 2;
+  if(dl==='W4'||dl==='end') return 3;
+  if(dl==='throughout') return 0;
   return dayToWeek(task.day);
+}
+
+// ── MONTH FILTER & VISIBLE ────────────────────────────────────────────
+function filterMonth(f, btn) {
+  currentMonthFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderCards();
+}
+function visibleTasks() {
+  if (currentPersonFilter.has('all')) return tasks;
+  return tasks.filter(t => currentPersonFilter.has(t.person));
 }
 
 // ── TIMELINE ──────────────────────────────────────────────────────────
 function renderTimeline() {
   const container = document.getElementById('timeline');
   container.innerHTML = '<div class="timeline-axis"></div>';
-  const now = new Date();
-  const cm = now.getMonth()+1;
+  const now = new Date(), cm = now.getMonth()+1;
   const byMonth = {};
-  tasks.forEach(t => {
+  visibleTasks().forEach(t => {
     const m = t.thisYearDate ? new Date(t.thisYearDate+'T00:00:00').getMonth()+1 : t.month;
     if(!byMonth[m]) byMonth[m]=[];
     byMonth[m].push(t);
   });
   const WEEK_WIDTH = 140;
   ACADEMIC_MONTHS.forEach(m => {
-    const group = document.createElement('div');
-    group.className = 'month-group';
-    const header = document.createElement('div');
-    header.className = 'month-header';
+    const group = document.createElement('div'); group.className='month-group';
+    const header = document.createElement('div'); header.className='month-header';
     const dot = document.createElement('div');
-    dot.className = 'month-dot'+(byMonth[m]?' has-items':'')+(m===cm?' current':'');
-    const lbl = document.createElement('div');
-    lbl.className = 'month-label';
-    lbl.textContent = MONTHS[m-1];
-    header.appendChild(dot); header.appendChild(lbl);
-    group.appendChild(header);
-    const weeksRow = document.createElement('div');
-    weeksRow.className = 'month-weeks';
-    const wp = [[],[],[],[]];
+    dot.className='month-dot'+(byMonth[m]?' has-items':'')+(m===cm?' current':'');
+    const lbl = document.createElement('div'); lbl.className='month-label'; lbl.textContent=MONTHS[m-1];
+    header.appendChild(dot); header.appendChild(lbl); group.appendChild(header);
+    const weeksRow = document.createElement('div'); weeksRow.className='month-weeks';
+    const wp=[[],[],[],[]];
     if(byMonth[m]) byMonth[m].forEach(t => wp[taskWeek(t)].push(t));
     for(let w=0;w<4;w++) {
-      const col = document.createElement('div'); col.className='week-col';
-      const tick = document.createElement('div'); tick.className='week-tick';
-      const wlbl = document.createElement('div'); wlbl.className='week-label'; wlbl.textContent='W'+(w+1);
-      const pills = document.createElement('div'); pills.className='week-pills';
+      const col=document.createElement('div'); col.className='week-col';
+      const tick=document.createElement('div'); tick.className='week-tick';
+      const wlbl=document.createElement('div'); wlbl.className='week-label'; wlbl.textContent='W'+(w+1);
+      const pills=document.createElement('div'); pills.className='week-pills';
       wp[w].forEach(t => {
-        const pill = document.createElement('div');
-        pill.className='timeline-pill '+urgencyClass(t);
-        pill.textContent=t.title; pill.title=t.title;
+        const pill=document.createElement('div');
+        pill.className='timeline-pill';
+        pill.setAttribute('data-person', t.person||'Chair');
+        pill.textContent=t.title; pill.title=t.title+' ('+t.person+')';
         pill.onclick=()=>openDetail(t.id);
         pills.appendChild(pill);
       });
       col.appendChild(tick); col.appendChild(wlbl); col.appendChild(pills);
       weeksRow.appendChild(col);
     }
-    group.appendChild(weeksRow);
-    container.appendChild(group);
+    group.appendChild(weeksRow); container.appendChild(group);
   });
-  const todayIdx = ACADEMIC_MONTHS.indexOf(cm);
-  if(todayIdx !== -1) {
-    const MONTH_WIDTH = 4*WEEK_WIDTH+1;
-    const frac = ((now.getDate()-1)%7)/7;
-    const left = todayIdx*MONTH_WIDTH + dayToWeek(now.getDate())*WEEK_WIDTH + frac*WEEK_WIDTH + 8;
-    const marker = document.createElement('div');
-    marker.className='today-marker'; marker.style.left=left+'px';
+  const todayIdx=ACADEMIC_MONTHS.indexOf(cm);
+  if(todayIdx!==-1) {
+    const MONTH_WIDTH=4*WEEK_WIDTH+1, frac=((now.getDate()-1)%7)/7;
+    const left=todayIdx*MONTH_WIDTH+dayToWeek(now.getDate())*WEEK_WIDTH+frac*WEEK_WIDTH+8;
+    const marker=document.createElement('div'); marker.className='today-marker'; marker.style.left=left+'px';
     container.appendChild(marker);
   }
 }
 
 // ── CARDS ─────────────────────────────────────────────────────────────
-function filterCards(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  renderCards();
-}
-
 function renderCards() {
-  const grid = document.getElementById('cards-grid');
-  let filtered = tasks.filter(t => {
-    if(currentFilter==='all') return true;
-    if(currentFilter==='urgent') return getDaysUntil(t)<=30;
-    if(currentFilter==='soon') return getDaysUntil(t)<=90;
-    return MONTHS[t.month-1]===currentFilter;
+  const grid=document.getElementById('cards-grid');
+  let filtered=visibleTasks().filter(t => {
+    if(currentMonthFilter==='all') return true;
+    if(currentMonthFilter==='urgent') return getDaysUntil(t)<=30;
+    if(currentMonthFilter==='soon') return getDaysUntil(t)<=90;
+    return MONTHS[t.month-1]===currentMonthFilter;
   });
-  filtered.sort((a,b) => getDaysUntil(a)-getDaysUntil(b));
+  filtered.sort((a,b)=>getDaysUntil(a)-getDaysUntil(b));
   if(!filtered.length) { grid.innerHTML='<div class="no-tasks">No deadlines match this filter.</div>'; return; }
-  grid.innerHTML = filtered.map(t => {
+  grid.innerHTML=filtered.map(t => {
     const urg=urgencyClass(t), lc=t.links?t.links.length:0, hc=t.history?t.history.length:0;
-    return `<div class="task-card ${urg}" onclick="openDetail('${t.id}')">
+    const p=t.person||'Chair';
+    return `<div class="task-card" data-person="${p}" onclick="openDetail('${t.id}')">
+      <div class="card-person" data-person="${p}">${p==='Erin'?'Academic Operations':p==='Connie'?'Scheduling':p==='Krystina'?'Department Coordinator':p==='Amanda'?'Finance':'Chair'}</div>
       <div class="card-date">${formatDate(t)} · ${t.recurrence==='varies'?'varies':'annual'}</div>
       <div class="card-title">${t.title}</div>
       <div class="card-meta">${(t.tags||[]).map(tag=>`<span class="tag">${tag}</span>`).join('')}</div>
       <div class="countdown ${urg}">${countdownLabel(t)}</div>
-      ${lc||hc?`<div class="card-links-preview">${lc?`↗ ${lc} link${lc>1?'s':''}`:''}${lc&&hc?' · ':''}${hc?`📋 ${hc} year${hc>1?'s':''} on record`:''}</div>`:''}
+      ${lc||hc?`<div class="card-links-preview">${lc?`↗ ${lc} link${lc>1?'s':''}`:''}${lc&&hc?' · ':''}${hc?`📋 ${hc} yr${hc>1?'s':''} on record`:''}</div>`:''}
     </div>`;
   }).join('');
 }
 
 // ── DETAIL MODAL ──────────────────────────────────────────────────────
 function openDetail(id) {
-  const task = tasks.find(t => t.id===id);
-  if(!task) return;
-  currentTaskId = id;
-  const urg = urgencyClass(task);
-  const bar = document.getElementById('modal-urgency-bar');
-  bar.textContent = urg==='urgent'?'⚠ Urgent — within 30 days':urg==='soon'?'◉ Coming up — within 90 days':countdownLabel(task);
-  bar.style.color = urg==='urgent'?'#b83030':urg==='soon'?'#8a6f20':'var(--muted)';
-  document.getElementById('modal-title').textContent = task.title;
-  document.getElementById('modal-date').textContent = formatDate(task)+(task.recurrence==='varies'?' — date varies by year':' — recurring annually');
-  document.getElementById('modal-notes').value = task.notes||'';
-  document.getElementById('modal-this-year-date').value = task.thisYearDate||'';
-  renderModalLinks(task);
-  renderModalHistory(task);
+  const task=tasks.find(t=>t.id===id); if(!task) return;
+  currentTaskId=id;
+  const urg=urgencyClass(task), p=task.person||'Chair';
+  const bar=document.getElementById('modal-urgency-bar');
+  bar.textContent=(urg==='urgent'?'⚠ Urgent — within 30 days':urg==='soon'?'◉ Coming up — within 90 days':countdownLabel(task))+' · '+(p==='Erin'?'Academic Operations':p==='Connie'?'Scheduling':p==='Krystina'?'Department Coordinator':p==='Amanda'?'Finance':'Chair');
+  bar.style.color=urg==='urgent'?'#b83030':urg==='soon'?'#8a6f20':'var(--muted)';
+  document.getElementById('modal-title').textContent=task.title;
+  document.getElementById('modal-date').textContent=formatDate(task)+(task.recurrence==='varies'?' — varies by year':' — recurring annually');
+  document.getElementById('modal-notes').value=task.notes||'';
+  document.getElementById('modal-this-year-date').value=task.thisYearDate||'';
+  renderModalLinks(task); renderModalHistory(task);
   document.getElementById('detail-modal').classList.add('open');
 }
 
 function renderModalLinks(task) {
-  const list = document.getElementById('modal-links-list');
-  if(!task.links||!task.links.length) { list.innerHTML='<div style="font-size:0.7rem;color:var(--muted);padding:4px 0;">No links yet.</div>'; return; }
-  list.innerHTML = task.links.map((lk,i)=>`<div class="link-item"><span class="link-label">${lk.label}</span><a href="${lk.url}" target="_blank">${lk.url}</a><button class="link-delete" onclick="removeLink(${i})">✕</button></div>`).join('');
+  const list=document.getElementById('modal-links-list');
+  if(!task.links||!task.links.length){list.innerHTML='<div style="font-size:0.7rem;color:var(--muted);padding:4px 0;">No links yet.</div>';return;}
+  list.innerHTML=task.links.map((lk,i)=>`<div class="link-item"><span class="link-label">${lk.label}</span><a href="${lk.url}" target="_blank">${lk.url}</a><button class="link-delete" onclick="removeLink(${i})">✕</button></div>`).join('');
 }
-
 function renderModalHistory(task) {
-  const list = document.getElementById('modal-history-list');
-  if(!task.history||!task.history.length) { list.innerHTML='<div style="font-size:0.7rem;color:var(--muted);padding:4px 0;">No historical records yet.</div>'; return; }
-  list.innerHTML = [...task.history].reverse().map(h=>`<div class="history-entry"><div class="history-year">${h.year}</div><div>${h.note}</div></div>`).join('');
+  const list=document.getElementById('modal-history-list');
+  if(!task.history||!task.history.length){list.innerHTML='<div style="font-size:0.7rem;color:var(--muted);padding:4px 0;">No historical records yet.</div>';return;}
+  list.innerHTML=[...task.history].reverse().map(h=>`<div class="history-entry"><div class="history-year">${h.year}</div><div>${h.note}</div></div>`).join('');
 }
-
 function addLink() {
-  const label=document.getElementById('new-link-label').value.trim();
-  const url=document.getElementById('new-link-url').value.trim();
+  const label=document.getElementById('new-link-label').value.trim(), url=document.getElementById('new-link-url').value.trim();
   if(!url) return;
-  const task=tasks.find(t=>t.id===currentTaskId);
-  if(!task.links) task.links=[];
+  const task=tasks.find(t=>t.id===currentTaskId); if(!task.links) task.links=[];
   task.links.push({label:label||url,url});
-  document.getElementById('new-link-label').value='';
-  document.getElementById('new-link-url').value='';
+  document.getElementById('new-link-label').value=''; document.getElementById('new-link-url').value='';
   renderModalLinks(task);
 }
-
-function removeLink(idx) {
-  const task=tasks.find(t=>t.id===currentTaskId);
-  task.links.splice(idx,1);
-  renderModalLinks(task);
-}
-
+function removeLink(idx) { const task=tasks.find(t=>t.id===currentTaskId); task.links.splice(idx,1); renderModalLinks(task); }
 function addHistory() {
-  const year=document.getElementById('new-history-year').value.trim();
-  const note=document.getElementById('new-history-note').value.trim();
+  const year=document.getElementById('new-history-year').value.trim(), note=document.getElementById('new-history-note').value.trim();
   if(!note) return;
-  const task=tasks.find(t=>t.id===currentTaskId);
-  if(!task.history) task.history=[];
+  const task=tasks.find(t=>t.id===currentTaskId); if(!task.history) task.history=[];
   task.history.push({year:year||'—',note});
-  document.getElementById('new-history-year').value='';
-  document.getElementById('new-history-note').value='';
+  document.getElementById('new-history-year').value=''; document.getElementById('new-history-note').value='';
   renderModalHistory(task);
 }
-
 function clearThisYearDate() { document.getElementById('modal-this-year-date').value=''; }
-
 function saveTask() {
   const task=tasks.find(t=>t.id===currentTaskId);
   task.notes=document.getElementById('modal-notes').value;
   task.thisYearDate=document.getElementById('modal-this-year-date').value||null;
-  saveTasks(tasks);
-  closeModal('detail-modal');
-  renderTimeline(); renderCards();
+  saveTasks(tasks); closeModal('detail-modal'); renderTimeline(); renderCards();
 }
-
 function deleteTask() {
   if(!confirm('Delete this deadline?')) return;
-  tasks=tasks.filter(t=>t.id!==currentTaskId);
-  saveTasks(tasks);
-  closeModal('detail-modal');
-  renderTimeline(); renderCards();
+  tasks=tasks.filter(t=>t.id!==currentTaskId); saveTasks(tasks); closeModal('detail-modal'); renderTimeline(); renderCards();
 }
 
 // ── ADD MODAL ─────────────────────────────────────────────────────────
@@ -904,57 +724,44 @@ function openAddModal() {
   ['new-title','new-day','new-tags','new-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('new-month').value='1';
   document.getElementById('new-recurrence').value='annual';
+  document.getElementById('new-person').value='Chair';
   document.getElementById('add-modal').classList.add('open');
 }
-
 function createTask() {
-  const title=document.getElementById('new-title').value.trim();
-  if(!title) { alert('Please enter a title.'); return; }
+  const title=document.getElementById('new-title').value.trim(); if(!title){alert('Please enter a title.');return;}
   const month=parseInt(document.getElementById('new-month').value);
   const dayRaw=document.getElementById('new-day').value.trim();
   const day=parseInt(dayRaw)||1;
   const recurrence=document.getElementById('new-recurrence').value;
   const tags=document.getElementById('new-tags').value.split(',').map(s=>s.trim()).filter(Boolean);
   const notes=document.getElementById('new-notes').value.trim();
-  tasks.push({id:'td'+Date.now(),title,month,day,dayLabel:dayRaw||'early',recurrence,tags,notes,links:[],history:[]});
-  saveTasks(tasks);
-  closeModal('add-modal');
-  renderTimeline(); renderCards();
+  const person=document.getElementById('new-person').value;
+  tasks.push({id:'td'+Date.now(),person,title,month,day,dayLabel:dayRaw||'early',recurrence,tags,notes,links:[],history:[]});
+  saveTasks(tasks); closeModal('add-modal'); renderTimeline(); renderCards();
 }
-
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-document.querySelectorAll('.modal-overlay').forEach(o => {
-  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); });
-});
+document.querySelectorAll('.modal-overlay').forEach(o=>{ o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}); });
 
 // ── CSV ───────────────────────────────────────────────────────────────
-function escapeCSV(val) {
-  const s=String(val==null?'':val);
-  return (s.includes(',')||s.includes('"')||s.includes('\n'))?'"'+s.replace(/"/g,'""')+'"':s;
-}
-
+function escapeCSV(val) { const s=String(val==null?'':val); return (s.includes(',')||s.includes('"')||s.includes('\n'))?'"'+s.replace(/"/g,'""')+'"':s; }
 function exportCSV() {
-  const headers=['id','title','month','day','dayLabel','recurrence','tags','notes','thisYearDate','links','history'];
-  const rows=tasks.map(t=>[t.id,t.title,t.month,t.day,t.dayLabel,t.recurrence,(t.tags||[]).join(';'),t.notes||'',t.thisYearDate||'',JSON.stringify(t.links||[]),JSON.stringify(t.history||[])].map(escapeCSV).join(','));
+  const headers=['id','person','title','month','day','dayLabel','recurrence','tags','notes','thisYearDate','links','history'];
+  const rows=tasks.map(t=>[t.id,t.person||'Chair',t.title,t.month,t.day,t.dayLabel,t.recurrence,(t.tags||[]).join(';'),t.notes||'',t.thisYearDate||'',JSON.stringify(t.links||[]),JSON.stringify(t.history||[])].map(escapeCSV).join(','));
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([[headers.join(','),...rows].join('\n')],{type:'text/csv'}));
-  a.download='chair-deadlines-'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click();
+  a.download='chair-deadlines-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
 }
-
 function importCSV(event) {
   const file=event.target.files[0]; if(!file) return;
   const reader=new FileReader();
   reader.onload=function(e) {
     try {
       const lines=e.target.result.split('\n').filter(l=>l.trim());
-      const headers=parseCSVRow(lines[0]);
-      const imported=[];
+      const headers=parseCSVRow(lines[0]); const imported=[];
       for(let i=1;i<lines.length;i++) {
         const vals=parseCSVRow(lines[i]); if(vals.length<6) continue;
         const obj={}; headers.forEach((h,idx)=>obj[h]=vals[idx]||'');
-        imported.push({id:obj.id||('td'+Date.now()+i),title:obj.title,month:parseInt(obj.month)||1,day:parseInt(obj.day)||1,dayLabel:obj.dayLabel||'',recurrence:obj.recurrence||'annual',tags:obj.tags?obj.tags.split(';').filter(Boolean):[],notes:obj.notes||'',thisYearDate:obj.thisYearDate||null,links:safeJSON(obj.links,[]),history:safeJSON(obj.history,[])});
+        imported.push({id:obj.id||('td'+Date.now()+i),person:obj.person||'Chair',title:obj.title,month:parseInt(obj.month)||1,day:parseInt(obj.day)||1,dayLabel:obj.dayLabel||'',recurrence:obj.recurrence||'annual',tags:obj.tags?obj.tags.split(';').filter(Boolean):[],notes:obj.notes||'',thisYearDate:obj.thisYearDate||null,links:safeJSON(obj.links,[]),history:safeJSON(obj.history,[])});
       }
       if(!imported.length){alert('No valid rows found.');return;}
       if(!confirm('Import '+imported.length+' deadline(s)? This will replace current data.')) return;
@@ -965,7 +772,6 @@ function importCSV(event) {
   };
   reader.readAsText(file);
 }
-
 function parseCSVRow(row) {
   const result=[]; let cur='',inQ=false;
   for(let i=0;i<row.length;i++) {
@@ -976,19 +782,14 @@ function parseCSVRow(row) {
   }
   result.push(cur); return result;
 }
-
 function safeJSON(str,fallback){try{return JSON.parse(str);}catch(e){return fallback;}}
 
 // ── INIT ──────────────────────────────────────────────────────────────
 function initApp() {
-  tasks = loadTasks();
-  renderTimeline();
-  renderCards();
-  const now = new Date();
-  const monthIdx = ACADEMIC_MONTHS.indexOf(now.getMonth()+1);
-  if(monthIdx > 0) {
-    document.querySelector('.timeline-scroll').scrollLeft = Math.max(0, monthIdx*(4*140+1)-40);
-  }
+  tasks=loadTasks();
+  renderTimeline(); renderCards();
+  const now=new Date(), monthIdx=ACADEMIC_MONTHS.indexOf(now.getMonth()+1);
+  if(monthIdx>0) document.querySelector('.timeline-scroll').scrollLeft=Math.max(0,monthIdx*(4*140+1)-40);
 }
 </script>
 </body>
