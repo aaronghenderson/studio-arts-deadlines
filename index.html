@@ -6,6 +6,91 @@
 <title>Department Chair — Deadline Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+  /* ── PASSWORD SCREEN ── */
+  #lock-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #1a1714;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  #lock-screen.visible { display: flex; }
+
+  #lock-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    color: #f5f0e8;
+    font-size: 1.6rem;
+    letter-spacing: 0.02em;
+  }
+
+  #lock-screen span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #7a7062;
+    display: block;
+    text-align: center;
+    margin-top: -16px;
+  }
+
+  #lock-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #lock-input {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    background: #2a2520;
+    border: 1.5px solid #3a3530;
+    color: #f5f0e8;
+    padding: 12px 20px;
+    text-align: center;
+    width: 220px;
+    letter-spacing: 0.15em;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  #lock-input:focus { border-color: #b85c2a; }
+  #lock-input.error { border-color: #b83030; animation: shake 0.3s ease; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  #lock-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 28px;
+    background: #b85c2a;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  #lock-btn:hover { background: #9a4a20; }
+  #lock-error {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: #b83030;
+    letter-spacing: 0.08em;
+    min-height: 16px;
+  }
+</style>
   :root {
     --ink: #1a1714;
     --paper: #f5f0e8;
@@ -609,6 +694,45 @@
 </style>
 </head>
 <body>
+
+<!-- LOCK SCREEN -->
+<div id="lock-screen">
+  <h2>Department Chair</h2>
+  <span>University of Pittsburgh · Studio Arts</span>
+  <div id="lock-form">
+    <input type="password" id="lock-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')unlock()">
+    <div id="lock-error"></div>
+    <button id="lock-btn" onclick="unlock()">Unlock</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  const PW = 'delanie';
+  const SESSION_KEY = 'chair_unlocked';
+  const lockScreen = document.getElementById('lock-screen');
+
+  function unlock() {
+    const val = document.getElementById('lock-input').value;
+    if (val === PW) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      lockScreen.classList.remove('visible');
+    } else {
+      const input = document.getElementById('lock-input');
+      document.getElementById('lock-error').textContent = 'Incorrect password.';
+      input.classList.add('error');
+      input.value = '';
+      setTimeout(() => input.classList.remove('error'), 400);
+    }
+  }
+  window.unlock = unlock;
+
+  if (!sessionStorage.getItem(SESSION_KEY)) {
+    lockScreen.classList.add('visible');
+    setTimeout(() => document.getElementById('lock-input').focus(), 50);
+  }
+})();
+</script>
 
 <header>
   <h1>
