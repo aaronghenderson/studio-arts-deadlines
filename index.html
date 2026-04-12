@@ -207,7 +207,7 @@
 <div id="app">
   <header>
     <h1>
-      <span>University of Pittsburgh · Studio Arts · v5</span>
+      <span>University of Pittsburgh · Studio Arts · v5.1</span>
       Deadline Tracker
     </h1>
     <div class="header-actions">
@@ -241,10 +241,15 @@
   </div>
 
   <section id="timeline-section">
-    <div class="section-label">Annual Timeline — Academic Year (Aug → Jul)</div>
-    <div class="timeline-scroll">
-      <div class="timeline" id="timeline">
-        <div class="timeline-axis"></div>
+    <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="toggleSection('timeline')">
+      <span>Annual Timeline — Academic Year (Aug → Jul)</span>
+      <span id="timeline-toggle" style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-left:auto;">▲ Collapse</span>
+    </div>
+    <div id="timeline-body" style="overflow:hidden;transition:max-height 0.3s ease;">
+      <div class="timeline-scroll">
+        <div class="timeline" id="timeline">
+          <div class="timeline-axis"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -269,8 +274,11 @@
         <button class="filter-btn" onclick="filterMonth('Jun',this)">Jun</button>
         <button class="filter-btn" onclick="filterMonth('Jul',this)">Jul</button>
       </div>
+      <span id="cards-toggle" onclick="toggleSection('cards')" style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);cursor:pointer;white-space:nowrap;margin-left:12px;">▲ Collapse</span>
     </div>
-    <div class="cards-grid" id="cards-grid"></div>
+    <div id="cards-body" style="overflow:hidden;transition:max-height 0.3s ease;">
+      <div class="cards-grid" id="cards-grid"></div>
+    </div>
   </section>
 
   <!-- DETAIL MODAL -->
@@ -368,7 +376,35 @@
 </div>
 
 <script>
-const STORAGE_KEY = 'chair_deadlines_v5';
+const sectionState = { timeline: true, cards: true };
+
+function toggleSection(id) {
+  sectionState[id] = !sectionState[id];
+  const body = document.getElementById(id + '-body');
+  const toggle = document.getElementById(id + '-toggle');
+  if (sectionState[id]) {
+    body.style.maxHeight = body.scrollHeight + 'px';
+    toggle.textContent = '▲ Collapse';
+  } else {
+    body.style.maxHeight = '0';
+    toggle.textContent = '▼ Expand';
+  }
+}
+
+function refreshSectionHeights() {
+  ['timeline','cards'].forEach(id => {
+    if (!sectionState[id]) return;
+    const body = document.getElementById(id+'-body');
+    if (body) body.style.maxHeight = body.scrollHeight + 'px';
+  });
+}
+function initSections() {
+  // Set initial max-height for open sections
+  ['timeline','cards'].forEach(id => {
+    const body = document.getElementById(id+'-body');
+    body.style.maxHeight = body.scrollHeight + 'px';
+  });
+}
 const ACADEMIC_MONTHS = [8,9,10,11,12,1,2,3,4,5,6,7];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -511,7 +547,7 @@ function filterPerson(p, btn) {
       btn.classList.add('active');
     }
   }
-  renderTimeline(); renderCards();
+  renderTimeline(); renderCards(); setTimeout(refreshSectionHeights, 50);
 }
 (function() {
   const PW = 'delanie', KEY = 'chair_session_ok';
@@ -587,7 +623,7 @@ function filterMonth(f, btn) {
   currentMonthFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  renderCards();
+  renderCards(); setTimeout(refreshSectionHeights, 50);
 }
 function visibleTasks() {
   if (currentPersonFilter.has('all')) return tasks;
@@ -719,11 +755,11 @@ function saveTask() {
   task.thisYearDate=document.getElementById('modal-this-year-date').value||null;
   const selectedPersons=Array.from(document.getElementById('modal-persons').selectedOptions).map(o=>o.value);
   task.persons=selectedPersons.length?selectedPersons:['Chair'];
-  saveTasks(tasks); closeModal('detail-modal'); renderTimeline(); renderCards();
+  saveTasks(tasks); closeModal('detail-modal'); renderTimeline(); renderCards(); setTimeout(refreshSectionHeights, 50);
 }
 function deleteTask() {
   if(!confirm('Delete this deadline?')) return;
-  tasks=tasks.filter(t=>t.id!==currentTaskId); saveTasks(tasks); closeModal('detail-modal'); renderTimeline(); renderCards();
+  tasks=tasks.filter(t=>t.id!==currentTaskId); saveTasks(tasks); closeModal('detail-modal'); renderTimeline(); renderCards(); setTimeout(refreshSectionHeights, 50);
 }
 
 // ── ADD MODAL ─────────────────────────────────────────────────────────
@@ -745,7 +781,7 @@ function createTask() {
   const persons=Array.from(document.getElementById('new-person').selectedOptions).map(o=>o.value);
   if(!persons.length){alert('Please select at least one role.');return;}
   tasks.push({id:'td'+Date.now(),persons,title,month,day,dayLabel:dayRaw||'early',recurrence,tags,notes,links:[],history:[]});
-  saveTasks(tasks); closeModal('add-modal'); renderTimeline(); renderCards();
+  saveTasks(tasks); closeModal('add-modal'); renderTimeline(); renderCards(); setTimeout(refreshSectionHeights, 50);
 }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(o=>{ o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}); });
@@ -774,7 +810,7 @@ function importCSV(event) {
       }
       if(!imported.length){alert('No valid rows found.');return;}
       if(!confirm('Import '+imported.length+' deadline(s)? This will replace current data.')) return;
-      tasks=imported; saveTasks(tasks); renderTimeline(); renderCards();
+      tasks=imported; saveTasks(tasks); renderTimeline(); renderCards(); setTimeout(refreshSectionHeights, 50);
       alert('Imported '+imported.length+' deadlines.');
     } catch(err){alert('Error: '+err.message);}
     event.target.value='';
@@ -796,7 +832,8 @@ function safeJSON(str,fallback){try{return JSON.parse(str);}catch(e){return fall
 // ── INIT ──────────────────────────────────────────────────────────────
 function initApp() {
   tasks=loadTasks();
-  renderTimeline(); renderCards();
+  renderTimeline(); renderCards(); setTimeout(refreshSectionHeights, 50);
+  setTimeout(initSections, 50);
   const now=new Date(), monthIdx=ACADEMIC_MONTHS.indexOf(now.getMonth()+1);
   if(monthIdx>0) document.querySelector('.timeline-scroll').scrollLeft=Math.max(0,monthIdx*(4*140+1)-40);
 }
