@@ -283,6 +283,17 @@
       <h2 id="modal-title"></h2>
       <div class="modal-date-row" id="modal-date"></div>
       <div class="modal-section">
+        <div class="modal-section-label">Assigned Roles</div>
+        <select id="modal-persons" multiple size="5" style="width:100%;font-family:'DM Mono',monospace;font-size:0.75rem;background:var(--paper);border:1.5px solid var(--rule);padding:4px;color:var(--ink);">
+          <option value="Chair">Chair</option>
+          <option value="Erin">Academic Operations</option>
+          <option value="Connie">Scheduling</option>
+          <option value="Krystina">Department Coordinator</option>
+          <option value="Amanda">Finance</option>
+        </select>
+        <div style="font-size:0.6rem;color:var(--muted);margin-top:4px;">Hold Ctrl/Cmd to select multiple roles.</div>
+      </div>
+      <div class="modal-section">
         <div class="modal-section-label">This Year's Specific Date</div>
         <div style="display:flex;align-items:center;gap:10px;">
           <input type="date" id="modal-this-year-date" style="flex:1;">
@@ -327,13 +338,13 @@
       <h2 style="font-family:'DM Serif Display',serif;margin-bottom:18px;">Add New Deadline</h2>
       <div class="form-row">
         <div class="form-group" style="flex:2"><label>Title</label><input type="text" id="new-title" placeholder="Deadline title"></div>
-        <div class="form-group"><label>Person</label>
-          <select id="new-person">
+        <div class="form-group"><label>Role(s) — hold Ctrl/Cmd to select multiple</label>
+          <select id="new-person" multiple size="5" style="height:auto;">
             <option value="Chair">Chair</option>
-            <option value="Erin">Erin — AOM</option>
-            <option value="Connie">Connie — Scheduling</option>
-            <option value="Krystina">Krystina — DC</option>
-            <option value="Amanda">Amanda — Finance</option>
+            <option value="Erin">Academic Operations</option>
+            <option value="Connie">Scheduling</option>
+            <option value="Krystina">Department Coordinator</option>
+            <option value="Amanda">Finance</option>
           </select>
         </div>
       </div>
@@ -368,117 +379,117 @@
 </div>
 
 <script>
-const STORAGE_KEY = 'chair_deadlines_v2';
+const STORAGE_KEY = 'chair_deadlines_v3';
 const ACADEMIC_MONTHS = [8,9,10,11,12,1,2,3,4,5,6,7];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 const DEFAULT_TASKS = [
   // ── CHAIR ──
-  { id:'c13', person:'Chair', title:'Faculty Retreat', month:8, day:19, dayLabel:'19', recurrence:'varies', tags:['faculty','academic'], notes:'Faculty retreat held on the Wednesday of the week before classes begin. This year: August 19.', links:[], history:[] },
-  { id:'c12', person:'Chair', title:'Classes Begin', month:8, day:24, dayLabel:'24', recurrence:'varies', tags:['academic'], notes:"First day of classes. Date varies slightly each year.", links:[], history:[] },
-  { id:'c1', person:'Chair', title:'Facilities & Equipment Requests Due', month:1, day:15, dayLabel:'15', recurrence:'annual', tags:['facilities','operations'], notes:"Submit facilities and equipment requests to Dean's office. Date is fixed at Jan 15.", links:[], history:[] },
-  { id:'c2', person:'Chair', title:'Ancillary Budgets Due', month:3, day:1, dayLabel:'early', recurrence:'annual', tags:['budget','finance'], notes:"Ancillary budget submissions due to A&S. Confirm exact date with Dean's office each year.", links:[], history:[] },
-  { id:'c3', person:'Chair', title:'Student Exhibition Opens', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['events','exhibitions'], notes:'Annual student exhibition opening. Typically early April.', links:[], history:[] },
-  { id:'c4', person:'Chair', title:'Send Graduation RSVPs to Students & Families', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['graduation','communications'], notes:'Send out RSVP invitations for graduation to students and their families at least one month before graduation.', links:[], history:[] },
-  { id:'c5', person:'Chair', title:'Remind Faculty About Graduation', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['graduation','faculty'], notes:'Send faculty reminder about graduation attendance, roles, and expectations.', links:[], history:[] },
-  { id:'c6', person:'Chair', title:'Send Departmental & Faculty Activity Reports Info', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','reporting'], notes:'Send out information and instructions to faculty about upcoming departmental and faculty activity reports.', links:[], history:[] },
-  { id:'c7', person:'Chair', title:'Faculty Actions — Promotion', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','promotion','hr'], notes:'Send out faculty actions related to promotion. Confirm exact process and deadlines with Erin/A&S.', links:[], history:[] },
-  { id:'c10', person:'Chair', title:'Submit Departmental Report', month:5, day:1, dayLabel:'1', recurrence:'annual', tags:['reporting','operations'], notes:'Chair submits the departmental report.', links:[], history:[] },
-  { id:'c8', person:'Chair', title:'Graduation Day & Student Exhibition Closes', month:5, day:2, dayLabel:'2', recurrence:'varies', tags:['graduation','events'], notes:'Graduation typically falls on the first Saturday in May. This year: May 2. Student exhibition closes same day.', links:[], history:[] },
-  { id:'c9', person:'Chair', title:'Faculty Submit Faculty Activity Reports', month:5, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','reporting'], notes:'Deadline for faculty to submit their Faculty Activity Reports.', links:[], history:[] },
-  { id:'c11', person:'Chair', title:'Annual Review Letters Due', month:7, day:17, dayLabel:'17', recurrence:'annual', tags:['faculty','review','hr'], notes:'Annual review letters must be sent to faculty by July 17.', links:[], history:[] },
+  { id:'c13', persons:['Chair'], title:'Faculty Retreat', month:8, day:19, dayLabel:'19', recurrence:'varies', tags:['faculty','academic'], notes:'Faculty retreat held on the Wednesday of the week before classes begin. This year: August 19.', links:[], history:[] },
+  { id:'c12', persons:['Chair'], title:'Classes Begin', month:8, day:24, dayLabel:'24', recurrence:'varies', tags:['academic'], notes:"First day of classes. Date varies slightly each year.", links:[], history:[] },
+  { id:'c1', persons:['Chair'], title:'Facilities & Equipment Requests Due', month:1, day:15, dayLabel:'15', recurrence:'annual', tags:['facilities','operations'], notes:"Submit facilities and equipment requests to Dean's office. Date is fixed at Jan 15.", links:[], history:[] },
+  { id:'c2', persons:['Chair'], title:'Ancillary Budgets Due', month:3, day:1, dayLabel:'early', recurrence:'annual', tags:['budget','finance'], notes:"Ancillary budget submissions due to A&S. Confirm exact date with Dean's office each year.", links:[], history:[] },
+  { id:'c3', persons:['Chair'], title:'Student Exhibition Opens', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['events','exhibitions'], notes:'Annual student exhibition opening. Typically early April.', links:[], history:[] },
+  { id:'c4', persons:['Chair'], title:'Send Graduation RSVPs to Students & Families', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['graduation','communications'], notes:'Send out RSVP invitations for graduation to students and their families at least one month before graduation.', links:[], history:[] },
+  { id:'c5', persons:['Chair'], title:'Remind Faculty About Graduation', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['graduation','faculty'], notes:'Send faculty reminder about graduation attendance, roles, and expectations.', links:[], history:[] },
+  { id:'c6', persons:['Chair'], title:'Send Departmental & Faculty Activity Reports Info', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','reporting'], notes:'Send out information and instructions to faculty about upcoming departmental and faculty activity reports.', links:[], history:[] },
+  { id:'c7', persons:['Chair'], title:'Faculty Actions — Promotion', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','promotion','hr'], notes:'Send out faculty actions related to promotion. Confirm exact process and deadlines with Erin/A&S.', links:[], history:[] },
+  { id:'c10', persons:['Chair'], title:'Submit Departmental Report', month:5, day:1, dayLabel:'1', recurrence:'annual', tags:['reporting','operations'], notes:'Chair submits the departmental report.', links:[], history:[] },
+  { id:'c8', persons:['Chair'], title:'Graduation Day & Student Exhibition Closes', month:5, day:2, dayLabel:'2', recurrence:'varies', tags:['graduation','events'], notes:'Graduation typically falls on the first Saturday in May. This year: May 2. Student exhibition closes same day.', links:[], history:[] },
+  { id:'c9', persons:['Chair'], title:'Faculty Submit Faculty Activity Reports', month:5, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','reporting'], notes:'Deadline for faculty to submit their Faculty Activity Reports.', links:[], history:[] },
+  { id:'c11', persons:['Chair'], title:'Annual Review Letters Due', month:7, day:17, dayLabel:'17', recurrence:'annual', tags:['faculty','review','hr'], notes:'Annual review letters must be sent to faculty by July 17.', links:[], history:[] },
 
   // ── ERIN — AOM ──
-  { id:'e1', person:'Erin', title:'Recruitment — Interviews & Campus Visits', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment','faculty'], notes:'Interviews and campus visits through the spring term.', links:[], history:[] },
-  { id:'e2', person:'Erin', title:'Appointment Stream — Promotion Cases', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Appt stream promotion cases active in January.', links:[], history:[] },
-  { id:'e3', person:'Erin', title:'Renewal for Visiting Lecturers', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Process renewals for Visiting Lecturers.', links:[], history:[] },
-  { id:'e4', person:'Erin', title:'TS Reappointments Due (3rd Year Review)', month:2, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr','tenure'], notes:'Tenure stream reappointments due — 3rd year review.', links:[], history:[] },
-  { id:'e5', person:'Erin', title:'Ancillary Budget Request Due', month:2, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Ancillary budget request due in February.', links:[], history:[] },
-  { id:'e6', person:'Erin', title:'Recruitment — Offers & Negotiations', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment','faculty'], notes:'Offers and negotiations going out for recruitment.', links:[], history:[] },
-  { id:'e7', person:'Erin', title:'Reach Out for Promotion Cases', month:3, day:1, dayLabel:'early', recurrence:'annual', tags:['promotion','faculty'], notes:'Start to reach out for promotion cases; review committees will meet in the fall.', links:[], history:[] },
-  { id:'e8', person:'Erin', title:'Tenure Promotion — Collecting Outside Evaluator Materials', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','tenure'], notes:'Collecting materials from outside evaluators for tenure promotion.', links:[], history:[] },
-  { id:'e9', person:'Erin', title:'Look at Reappointments for Next AY', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Review who needs reappointments for next academic year.', links:[], history:[] },
-  { id:'e10', person:'Erin', title:'Ancillary Budget Approval', month:3, day:1, dayLabel:'end', recurrence:'annual', tags:['budget'], notes:'Ancillary budget approval in March.', links:[], history:[] },
-  { id:'e11', person:'Erin', title:'Solicitation for Recruitment Requests (Next AY)', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:"Solicitation from Dean's office for recruitment requests for next AY.", links:[], history:[] },
-  { id:'e12', person:'Erin', title:'PTI & Overload Contracts Due for Summer', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI and overload contracts due for summer.', links:[], history:[] },
-  { id:'e13', person:'Erin', title:'Visiting Renewals Due', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Visiting faculty renewals due.', links:[], history:[] },
-  { id:'e14', person:'Erin', title:'Upload Final Packet & Hire to PC (Recruitment)', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:'Upload final packet and hire to PC for any recruitment.', links:[], history:[] },
-  { id:'e15', person:'Erin', title:"Chair's Department Report Due to Lisa Lang", month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['reporting'], notes:"Chair's department report due to Lisa Lang.", links:[], history:[] },
-  { id:'e16', person:'Erin', title:'Recruitment Requests for Next AY Due', month:6, day:1, dayLabel:'early', recurrence:'annual', tags:['recruitment'], notes:'Recruitment requests for next AY due end of May/early June.', links:[], history:[] },
-  { id:'e17', person:'Erin', title:'Supplemental Hire Request — PTI/VL/Overload (Fall)', month:6, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Supplemental request to hire PTI, VL, overload contracts for fall due for unassigned courses.', links:[], history:[] },
-  { id:'e18', person:'Erin', title:'Annual Reviews Due — Distinguished Faculty, Incoming Chairs', month:6, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','review'], notes:'Annual reviews for distinguished faculty, incoming chairs, program directors due to Lisa Lang.', links:[], history:[] },
-  { id:'e19', person:'Erin', title:'New Computers & Office Spaces for New Faculty', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','operations'], notes:'Set up new computers and office spaces for new faculty.', links:[], history:[] },
-  { id:'e20', person:'Erin', title:'TTWS: CVs for Promotion & Tenure Cases Due to Jenn Bates', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','tenure'], notes:'TTWS: CVs for promotion and tenure cases due to Jenn Bates.', links:[], history:[] },
-  { id:'e21', person:'Erin', title:'Annual Letters for Faculty Due', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','review'], notes:'Annual letters for faculty due.', links:[], history:[] },
-  { id:'e22', person:'Erin', title:'PTI Contracts Signed & Uploaded to PC', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts signed and uploaded to PC.', links:[], history:[] },
-  { id:'e23', person:'Erin', title:'Supplemental Hire Requests — PT/Overload (Fall Unassigned)', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Supplemental hire requests for PT or overload contracts for fall courses unassigned.', links:[], history:[] },
-  { id:'e24', person:'Erin', title:'Follow Up with Promotion Cases — Dept Review in Fall', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Follow up with promotion cases; dept committees review in fall.', links:[], history:[] },
-  { id:'e25', person:'Erin', title:'Collect Materials — Dept Review Committee Vote on Tenure', month:9, day:1, dayLabel:'throughout', recurrence:'annual', tags:['tenure','promotion'], notes:'Collect materials shared with dept review committee; vote on tenure promotion cases for Assistant to Associate Professor.', links:[], history:[] },
-  { id:'e26', person:'Erin', title:'Follow Up on Promotion Cases', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Follow up on promotion cases in October.', links:[], history:[] },
-  { id:'e27', person:'Erin', title:'TTS: Assistant to Associate Professor Due to Jenn Bates', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['tenure','promotion'], notes:'TTS: Assistant to Associate professor due to Jenn Bates.', links:[], history:[] },
-  { id:'e28', person:'Erin', title:'Submit Presumptive Renewal Reappointments', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Submit presumptive renewal reappointments.', links:[], history:[] },
-  { id:'e29', person:'Erin', title:'Recommendations for Renewal/Nonrenewal — FT AS Faculty (<5 yrs)', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Recommendations for renewal/nonrenewal for FT AS faculty with less than 5 years of service can be submitted.', links:[], history:[] },
-  { id:'e30', person:'Erin', title:'Finalize Promotion Materials — AS Cases', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Finalize collection of promotion materials for AS promotion cases.', links:[], history:[] },
-  { id:'e31', person:'Erin', title:'Collected Materials Shared with Committee — TTS Cases', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','tenure'], notes:'Collected materials shared with committee for TTS promotion cases.', links:[], history:[] },
-  { id:'e32', person:'Erin', title:'Sabbatical & LOA Requests Submitted to PC', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Sabbatical and LOA requests submitted to PC.', links:[], history:[] },
-  { id:'e33', person:'Erin', title:'Discuss Renewal of PTIs for Spring Term', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Discuss renewal of PTIs for spring term.', links:[], history:[] },
-  { id:'e34', person:'Erin', title:'Collect Reference Letters — Recruitment Finalists', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:'Collect letters of reference for recruitment finalists, upload to PC, make on-campus recruitment request.', links:[], history:[] },
-  { id:'e35', person:'Erin', title:'Promotion to Full Dossiers Due to Jenn Bates', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Promotion to full dossiers due to Jenn Bates.', links:[], history:[] },
-  { id:'e36', person:'Erin', title:'Recommendations for TS Assistant Professors (3rd Year)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['tenure','hr'], notes:'Recommendations for renewal of TS assistant professors completing 3rd year of service.', links:[], history:[] },
-  { id:'e37', person:'Erin', title:'PTI Contracts Uploaded to PC (December)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts should be uploaded to PC.', links:[], history:[] },
+  { id:'e1', persons:['Erin'], title:'Recruitment — Interviews & Campus Visits', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment','faculty'], notes:'Interviews and campus visits through the spring term.', links:[], history:[] },
+  { id:'e2', persons:['Erin'], title:'Appointment Stream — Promotion Cases', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Appt stream promotion cases active in January.', links:[], history:[] },
+  { id:'e3', persons:['Erin'], title:'Renewal for Visiting Lecturers', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Process renewals for Visiting Lecturers.', links:[], history:[] },
+  { id:'e4', persons:['Erin'], title:'TS Reappointments Due (3rd Year Review)', month:2, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr','tenure'], notes:'Tenure stream reappointments due — 3rd year review.', links:[], history:[] },
+  { id:'e5', persons:['Erin'], title:'Ancillary Budget Request Due', month:2, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Ancillary budget request due in February.', links:[], history:[] },
+  { id:'e6', persons:['Erin'], title:'Recruitment — Offers & Negotiations', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment','faculty'], notes:'Offers and negotiations going out for recruitment.', links:[], history:[] },
+  { id:'e7', persons:['Erin'], title:'Reach Out for Promotion Cases', month:3, day:1, dayLabel:'early', recurrence:'annual', tags:['promotion','faculty'], notes:'Start to reach out for promotion cases; review committees will meet in the fall.', links:[], history:[] },
+  { id:'e8', persons:['Erin'], title:'Tenure Promotion — Collecting Outside Evaluator Materials', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','tenure'], notes:'Collecting materials from outside evaluators for tenure promotion.', links:[], history:[] },
+  { id:'e9', persons:['Erin'], title:'Look at Reappointments for Next AY', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Review who needs reappointments for next academic year.', links:[], history:[] },
+  { id:'e10', persons:['Erin'], title:'Ancillary Budget Approval', month:3, day:1, dayLabel:'end', recurrence:'annual', tags:['budget'], notes:'Ancillary budget approval in March.', links:[], history:[] },
+  { id:'e11', persons:['Erin'], title:'Solicitation for Recruitment Requests (Next AY)', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:"Solicitation from Dean's office for recruitment requests for next AY.", links:[], history:[] },
+  { id:'e12', persons:['Erin'], title:'PTI & Overload Contracts Due for Summer', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI and overload contracts due for summer.', links:[], history:[] },
+  { id:'e13', persons:['Erin'], title:'Visiting Renewals Due', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Visiting faculty renewals due.', links:[], history:[] },
+  { id:'e14', persons:['Erin'], title:'Upload Final Packet & Hire to PC (Recruitment)', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:'Upload final packet and hire to PC for any recruitment.', links:[], history:[] },
+  { id:'e15', persons:['Erin'], title:"Chair's Department Report Due to Lisa Lang", month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['reporting'], notes:"Chair's department report due to Lisa Lang.", links:[], history:[] },
+  { id:'e16', persons:['Erin'], title:'Recruitment Requests for Next AY Due', month:6, day:1, dayLabel:'early', recurrence:'annual', tags:['recruitment'], notes:'Recruitment requests for next AY due end of May/early June.', links:[], history:[] },
+  { id:'e17', persons:['Erin'], title:'Supplemental Hire Request — PTI/VL/Overload (Fall)', month:6, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Supplemental request to hire PTI, VL, overload contracts for fall due for unassigned courses.', links:[], history:[] },
+  { id:'e18', persons:['Erin'], title:'Annual Reviews Due — Distinguished Faculty, Incoming Chairs', month:6, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','review'], notes:'Annual reviews for distinguished faculty, incoming chairs, program directors due to Lisa Lang.', links:[], history:[] },
+  { id:'e19', persons:['Erin'], title:'New Computers & Office Spaces for New Faculty', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','operations'], notes:'Set up new computers and office spaces for new faculty.', links:[], history:[] },
+  { id:'e20', persons:['Erin'], title:'TTWS: CVs for Promotion & Tenure Cases Due to Jenn Bates', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','tenure'], notes:'TTWS: CVs for promotion and tenure cases due to Jenn Bates.', links:[], history:[] },
+  { id:'e21', persons:['Erin'], title:'Annual Letters for Faculty Due', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','review'], notes:'Annual letters for faculty due.', links:[], history:[] },
+  { id:'e22', persons:['Erin'], title:'PTI Contracts Signed & Uploaded to PC', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts signed and uploaded to PC.', links:[], history:[] },
+  { id:'e23', persons:['Erin'], title:'Supplemental Hire Requests — PT/Overload (Fall Unassigned)', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Supplemental hire requests for PT or overload contracts for fall courses unassigned.', links:[], history:[] },
+  { id:'e24', persons:['Erin'], title:'Follow Up with Promotion Cases — Dept Review in Fall', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Follow up with promotion cases; dept committees review in fall.', links:[], history:[] },
+  { id:'e25', persons:['Erin'], title:'Collect Materials — Dept Review Committee Vote on Tenure', month:9, day:1, dayLabel:'throughout', recurrence:'annual', tags:['tenure','promotion'], notes:'Collect materials shared with dept review committee; vote on tenure promotion cases for Assistant to Associate Professor.', links:[], history:[] },
+  { id:'e26', persons:['Erin'], title:'Follow Up on Promotion Cases', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Follow up on promotion cases in October.', links:[], history:[] },
+  { id:'e27', persons:['Erin'], title:'TTS: Assistant to Associate Professor Due to Jenn Bates', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['tenure','promotion'], notes:'TTS: Assistant to Associate professor due to Jenn Bates.', links:[], history:[] },
+  { id:'e28', persons:['Erin'], title:'Submit Presumptive Renewal Reappointments', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Submit presumptive renewal reappointments.', links:[], history:[] },
+  { id:'e29', persons:['Erin'], title:'Recommendations for Renewal/Nonrenewal — FT AS Faculty (<5 yrs)', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Recommendations for renewal/nonrenewal for FT AS faculty with less than 5 years of service can be submitted.', links:[], history:[] },
+  { id:'e30', persons:['Erin'], title:'Finalize Promotion Materials — AS Cases', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Finalize collection of promotion materials for AS promotion cases.', links:[], history:[] },
+  { id:'e31', persons:['Erin'], title:'Collected Materials Shared with Committee — TTS Cases', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','tenure'], notes:'Collected materials shared with committee for TTS promotion cases.', links:[], history:[] },
+  { id:'e32', persons:['Erin'], title:'Sabbatical & LOA Requests Submitted to PC', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Sabbatical and LOA requests submitted to PC.', links:[], history:[] },
+  { id:'e33', persons:['Erin'], title:'Discuss Renewal of PTIs for Spring Term', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Discuss renewal of PTIs for spring term.', links:[], history:[] },
+  { id:'e34', persons:['Erin'], title:'Collect Reference Letters — Recruitment Finalists', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:'Collect letters of reference for recruitment finalists, upload to PC, make on-campus recruitment request.', links:[], history:[] },
+  { id:'e35', persons:['Erin'], title:'Promotion to Full Dossiers Due to Jenn Bates', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Promotion to full dossiers due to Jenn Bates.', links:[], history:[] },
+  { id:'e36', persons:['Erin'], title:'Recommendations for TS Assistant Professors (3rd Year)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['tenure','hr'], notes:'Recommendations for renewal of TS assistant professors completing 3rd year of service.', links:[], history:[] },
+  { id:'e37', persons:['Erin'], title:'PTI Contracts Uploaded to PC (December)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts should be uploaded to PC.', links:[], history:[] },
 
   // ── CONNIE — SCHEDULING ──
-  { id:'s1', person:'Connie', title:'Spring Class Section Updates Window Opens', month:6, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'Beginning of June — the spring class section updates window opens.', links:[], history:[] },
-  { id:'s2', person:'Connie', title:'Fall Course Catalog Updates Due in Curriculog', month:6, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling','curriculog'], notes:'Third week in June — the fall course catalog updates due in Curriculog.', links:[], history:[] },
-  { id:'s3', person:'Connie', title:'Spring Update Deadline', month:7, day:1, dayLabel:'end', recurrence:'annual', tags:['scheduling'], notes:'End of July is the spring update deadline.', links:[], history:[] },
-  { id:'s4', person:'Connie', title:'Spring Room Assignments Workflow Opens', month:9, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'Third week in September the workflow opens with room assignments for spring.', links:[], history:[] },
-  { id:'s5', person:'Connie', title:'Summer Class Section Workflow Opens', month:8, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'Third week of August the summer class section workflow opens.', links:[], history:[] },
-  { id:'s6', person:'Connie', title:'Course Catalog Additions/Updates Due in Curriculog (Summer)', month:9, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling','curriculog'], notes:'At the beginning of September, the course catalog addition/updates are due in Curriculog.', links:[], history:[] },
-  { id:'s7', person:'Connie', title:'Spring Class Section Update Deadline', month:10, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'Third week in October the spring class section update deadline.', links:[], history:[] },
-  { id:'s8', person:'Connie', title:'Summer Room Assignments Workflow Opens', month:11, day:1, dayLabel:'end', recurrence:'annual', tags:['scheduling'], notes:'At the end of November, the workflow opens with room assignments for summer.', links:[], history:[] },
-  { id:'s9', person:'Connie', title:'Fall Class Section Workflow Opens', month:11, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'At the beginning of November, the fall class section workflow opens.', links:[], history:[] },
-  { id:'s10', person:'Connie', title:'Course Catalog Updates Due in Curriculog (Fall)', month:12, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling','curriculog'], notes:'Beginning of December, the course catalog updates are due in Curriculog.', links:[], history:[] },
-  { id:'s11', person:'Connie', title:'Fall Class Section Update Deadline', month:1, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'At the beginning of January is the class section update deadline.', links:[], history:[] },
-  { id:'s12', person:'Connie', title:'Fall Room Assignments Workflow Opens', month:2, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'On the third week in February the class section workflow opens with room assignments.', links:[], history:[] },
+  { id:'s1', persons:['Connie'], title:'Spring Class Section Updates Window Opens', month:6, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'Beginning of June — the spring class section updates window opens.', links:[], history:[] },
+  { id:'s2', persons:['Connie'], title:'Fall Course Catalog Updates Due in Curriculog', month:6, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling','curriculog'], notes:'Third week in June — the fall course catalog updates due in Curriculog.', links:[], history:[] },
+  { id:'s3', persons:['Connie'], title:'Spring Update Deadline', month:7, day:1, dayLabel:'end', recurrence:'annual', tags:['scheduling'], notes:'End of July is the spring update deadline.', links:[], history:[] },
+  { id:'s4', persons:['Connie'], title:'Spring Room Assignments Workflow Opens', month:9, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'Third week in September the workflow opens with room assignments for spring.', links:[], history:[] },
+  { id:'s5', persons:['Connie'], title:'Summer Class Section Workflow Opens', month:8, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'Third week of August the summer class section workflow opens.', links:[], history:[] },
+  { id:'s6', persons:['Connie'], title:'Course Catalog Additions/Updates Due in Curriculog (Summer)', month:9, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling','curriculog'], notes:'At the beginning of September, the course catalog addition/updates are due in Curriculog.', links:[], history:[] },
+  { id:'s7', persons:['Connie'], title:'Spring Class Section Update Deadline', month:10, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'Third week in October the spring class section update deadline.', links:[], history:[] },
+  { id:'s8', persons:['Connie'], title:'Summer Room Assignments Workflow Opens', month:11, day:1, dayLabel:'end', recurrence:'annual', tags:['scheduling'], notes:'At the end of November, the workflow opens with room assignments for summer.', links:[], history:[] },
+  { id:'s9', persons:['Connie'], title:'Fall Class Section Workflow Opens', month:11, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'At the beginning of November, the fall class section workflow opens.', links:[], history:[] },
+  { id:'s10', persons:['Connie'], title:'Course Catalog Updates Due in Curriculog (Fall)', month:12, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling','curriculog'], notes:'Beginning of December, the course catalog updates are due in Curriculog.', links:[], history:[] },
+  { id:'s11', persons:['Connie'], title:'Fall Class Section Update Deadline', month:1, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'At the beginning of January is the class section update deadline.', links:[], history:[] },
+  { id:'s12', persons:['Connie'], title:'Fall Room Assignments Workflow Opens', month:2, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'On the third week in February the class section workflow opens with room assignments.', links:[], history:[] },
 
   // ── KRYSTINA — DC ──
-  { id:'k1', person:'Krystina', title:'Recruitment — Arranging Campus Visits', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:'Arranging campus visits for recruitment.', links:[], history:[] },
-  { id:'k2', person:'Krystina', title:'Prep & Planning for Graduation', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['graduation'], notes:'Graduation prep and planning begins in January and continues through May.', links:[], history:[] },
-  { id:'k3', person:'Krystina', title:'Prep & Planning for Senior Exhibition', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Senior exhibition prep and planning begins in January.', links:[], history:[] },
-  { id:'k4', person:'Krystina', title:'Swipe Access — Returning Students & Majors (Spring)', month:1, day:1, dayLabel:'W1', recurrence:'annual', tags:['operations','students'], notes:'Swipe access given to returning students and majors first week of term; new students receive access after.', links:[], history:[] },
-  { id:'k5', person:'Krystina', title:'Ancillary Budget Planning', month:2, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Requires chair, DC, AOM, fiscal, AO, and scheduler/DUG to complete.', links:[], history:[] },
-  { id:'k6', person:'Krystina', title:'PTI Reappointments for Next AY', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI reappointments for next academic year.', links:[], history:[] },
-  { id:'k7', person:'Krystina', title:'Request Judges for Senior Exhibition', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Request judges for senior exhibition.', links:[], history:[] },
-  { id:'k8', person:'Krystina', title:'Schedule Judges for Senior Exhibition', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Schedule judges for senior exhibition.', links:[], history:[] },
-  { id:'k9', person:'Krystina', title:'PTI & Overload Contracts Due for Summer', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI and overload contracts due for summer.', links:[], history:[] },
-  { id:'k10', person:'Krystina', title:'Ancillary Budget Approval', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Ancillary budget approval in April.', links:[], history:[] },
-  { id:'k11', person:'Krystina', title:'Locker Cleanout', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['operations'], notes:'Annual locker cleanout.', links:[], history:[] },
-  { id:'k12', person:'Krystina', title:'Department Graduation', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['graduation'], notes:'Department graduation ceremony.', links:[], history:[] },
-  { id:'k13', person:'Krystina', title:'Finalize Senior Exhibition Prep', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Finalize senior exhibition prep and planning.', links:[], history:[] },
-  { id:'k14', person:'Krystina', title:'Supplemental Hire Request — PTI/VL/Overload (Fall)', month:6, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Supplemental request to hire PTI, VL, overload contracts for fall due for unassigned courses.', links:[], history:[] },
-  { id:'k15', person:'Krystina', title:'New Computers & Office Spaces for New Faculty', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','operations'], notes:'Set up new computers and office spaces for new faculty.', links:[], history:[] },
-  { id:'k16', person:'Krystina', title:'Annual Letters for Faculty — Upload to PC', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','review'], notes:'Annual letters for faculty due; upload to PC.', links:[], history:[] },
-  { id:'k17', person:'Krystina', title:'PTI Contracts Signed & Uploaded to PC (by July 15)', month:7, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts signed and uploaded to PC by July 15.', links:[], history:[] },
-  { id:'k18', person:'Krystina', title:'Fall Memo Drafting & Collaboration', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['communications'], notes:'Fall memo drafting and collaboration — to be sent ~1 month before start of term.', links:[], history:[] },
-  { id:'k19', person:'Krystina', title:'Faculty Office Location & Hours Survey', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','operations'], notes:'Faculty office location and hours survey.', links:[], history:[] },
-  { id:'k20', person:'Krystina', title:'Swipe Access — Returning Students & Majors (Fall)', month:8, day:1, dayLabel:'W1', recurrence:'annual', tags:['operations','students'], notes:'Swipe access given to returning students and majors first week of term; new students receive access after.', links:[], history:[] },
-  { id:'k21', person:'Krystina', title:'Prep & Planning for Fall Festival', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['events'], notes:'Fall Festival prep and planning begins in August and runs through December.', links:[], history:[] },
-  { id:'k22', person:'Krystina', title:'Benching/Nonrenewal Notices Sent', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Benching/nonrenewal notices sent in October.', links:[], history:[] },
-  { id:'k23', person:'Krystina', title:'Presumptive Renewal Reappointments', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Presumptive renewal reappointments processed in October.', links:[], history:[] },
-  { id:'k24', person:'Krystina', title:'Ancillary Budget Reporting', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Ancillary budget reporting in October.', links:[], history:[] },
-  { id:'k25', person:'Krystina', title:'Discuss Renewal of PTIs for Spring Semester', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Discuss renewal of PTIs for spring semester.', links:[], history:[] },
-  { id:'k26', person:'Krystina', title:'PTI Contracts Drafted (Spring)', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts drafted for spring semester.', links:[], history:[] },
-  { id:'k27', person:'Krystina', title:'Finalize Fall Festival Prep', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['events'], notes:'Finalize Fall Festival prep and planning.', links:[], history:[] },
-  { id:'k28', person:'Krystina', title:'PTI Contracts Signed & Uploaded to PC (December)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts signed and uploaded to PC.', links:[], history:[] },
-  { id:'k29', person:'Krystina', title:'Swipe Access Removed from Students (After Finals)', month:12, day:1, dayLabel:'end', recurrence:'annual', tags:['operations','students'], notes:'Swipe access removed from students following finals week.', links:[], history:[] },
-  { id:'k30', person:'Krystina', title:'Spring Memo Drafting & Collaboration', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['communications'], notes:'Spring memo drafting and collaboration — to be sent prior to winter break.', links:[], history:[] },
+  { id:'k1', persons:['Krystina'], title:'Recruitment — Arranging Campus Visits', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:'Arranging campus visits for recruitment.', links:[], history:[] },
+  { id:'k2', persons:['Krystina'], title:'Prep & Planning for Graduation', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['graduation'], notes:'Graduation prep and planning begins in January and continues through May.', links:[], history:[] },
+  { id:'k3', persons:['Krystina'], title:'Prep & Planning for Senior Exhibition', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Senior exhibition prep and planning begins in January.', links:[], history:[] },
+  { id:'k4', persons:['Krystina'], title:'Swipe Access — Returning Students & Majors (Spring)', month:1, day:1, dayLabel:'W1', recurrence:'annual', tags:['operations','students'], notes:'Swipe access given to returning students and majors first week of term; new students receive access after.', links:[], history:[] },
+  { id:'k5', persons:['Krystina'], title:'Ancillary Budget Planning', month:2, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Requires chair, DC, AOM, fiscal, AO, and scheduler/DUG to complete.', links:[], history:[] },
+  { id:'k6', persons:['Krystina'], title:'PTI Reappointments for Next AY', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI reappointments for next academic year.', links:[], history:[] },
+  { id:'k7', persons:['Krystina'], title:'Request Judges for Senior Exhibition', month:3, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Request judges for senior exhibition.', links:[], history:[] },
+  { id:'k8', persons:['Krystina'], title:'Schedule Judges for Senior Exhibition', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Schedule judges for senior exhibition.', links:[], history:[] },
+  { id:'k9', persons:['Krystina'], title:'PTI & Overload Contracts Due for Summer', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI and overload contracts due for summer.', links:[], history:[] },
+  { id:'k10', persons:['Krystina'], title:'Ancillary Budget Approval', month:4, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Ancillary budget approval in April.', links:[], history:[] },
+  { id:'k11', persons:['Krystina'], title:'Locker Cleanout', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['operations'], notes:'Annual locker cleanout.', links:[], history:[] },
+  { id:'k12', persons:['Krystina'], title:'Department Graduation', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['graduation'], notes:'Department graduation ceremony.', links:[], history:[] },
+  { id:'k13', persons:['Krystina'], title:'Finalize Senior Exhibition Prep', month:5, day:1, dayLabel:'throughout', recurrence:'annual', tags:['exhibitions'], notes:'Finalize senior exhibition prep and planning.', links:[], history:[] },
+  { id:'k14', persons:['Krystina'], title:'Supplemental Hire Request — PTI/VL/Overload (Fall)', month:6, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Supplemental request to hire PTI, VL, overload contracts for fall due for unassigned courses.', links:[], history:[] },
+  { id:'k15', persons:['Krystina'], title:'New Computers & Office Spaces for New Faculty', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','operations'], notes:'Set up new computers and office spaces for new faculty.', links:[], history:[] },
+  { id:'k16', persons:['Krystina'], title:'Annual Letters for Faculty — Upload to PC', month:7, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','review'], notes:'Annual letters for faculty due; upload to PC.', links:[], history:[] },
+  { id:'k17', persons:['Krystina'], title:'PTI Contracts Signed & Uploaded to PC (by July 15)', month:7, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts signed and uploaded to PC by July 15.', links:[], history:[] },
+  { id:'k18', persons:['Krystina'], title:'Fall Memo Drafting & Collaboration', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['communications'], notes:'Fall memo drafting and collaboration — to be sent ~1 month before start of term.', links:[], history:[] },
+  { id:'k19', persons:['Krystina'], title:'Faculty Office Location & Hours Survey', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','operations'], notes:'Faculty office location and hours survey.', links:[], history:[] },
+  { id:'k20', persons:['Krystina'], title:'Swipe Access — Returning Students & Majors (Fall)', month:8, day:1, dayLabel:'W1', recurrence:'annual', tags:['operations','students'], notes:'Swipe access given to returning students and majors first week of term; new students receive access after.', links:[], history:[] },
+  { id:'k21', persons:['Krystina'], title:'Prep & Planning for Fall Festival', month:8, day:1, dayLabel:'throughout', recurrence:'annual', tags:['events'], notes:'Fall Festival prep and planning begins in August and runs through December.', links:[], history:[] },
+  { id:'k22', persons:['Krystina'], title:'Benching/Nonrenewal Notices Sent', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Benching/nonrenewal notices sent in October.', links:[], history:[] },
+  { id:'k23', persons:['Krystina'], title:'Presumptive Renewal Reappointments', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Presumptive renewal reappointments processed in October.', links:[], history:[] },
+  { id:'k24', persons:['Krystina'], title:'Ancillary Budget Reporting', month:10, day:1, dayLabel:'throughout', recurrence:'annual', tags:['budget'], notes:'Ancillary budget reporting in October.', links:[], history:[] },
+  { id:'k25', persons:['Krystina'], title:'Discuss Renewal of PTIs for Spring Semester', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'Discuss renewal of PTIs for spring semester.', links:[], history:[] },
+  { id:'k26', persons:['Krystina'], title:'PTI Contracts Drafted (Spring)', month:11, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts drafted for spring semester.', links:[], history:[] },
+  { id:'k27', persons:['Krystina'], title:'Finalize Fall Festival Prep', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['events'], notes:'Finalize Fall Festival prep and planning.', links:[], history:[] },
+  { id:'k28', persons:['Krystina'], title:'PTI Contracts Signed & Uploaded to PC (December)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts signed and uploaded to PC.', links:[], history:[] },
+  { id:'k29', persons:['Krystina'], title:'Swipe Access Removed from Students (After Finals)', month:12, day:1, dayLabel:'end', recurrence:'annual', tags:['operations','students'], notes:'Swipe access removed from students following finals week.', links:[], history:[] },
+  { id:'k30', persons:['Krystina'], title:'Spring Memo Drafting & Collaboration', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['communications'], notes:'Spring memo drafting and collaboration — to be sent prior to winter break.', links:[], history:[] },
 
   // ── AMANDA — FINANCE ──
-  { id:'a1', person:'Amanda', title:'Last Date for Items Ordered (Fiscal Year)', month:6, day:1, dayLabel:'1', recurrence:'annual', tags:['budget','finance'], notes:'The last date for items to be ordered for the fiscal year will be June 1st. Not applicable to fall ordering or quick picks for summer.', links:[], history:[] },
-  { id:'a2', person:'Amanda', title:'Guest Speaker Lead Time (1 Month)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'1 month lead time needed for guest speakers. Plan accordingly.', links:[], history:[] },
-  { id:'a3', person:'Amanda', title:'Service Agreement Lead Time (2 Months)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'2 month lead time needed for service agreements. Plan accordingly.', links:[], history:[] },
-  { id:'a4', person:'Amanda', title:'SA Purchases Lead Time (1.5 Months)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'1.5 month lead time needed for SA purchases. Plan accordingly.', links:[], history:[] }
+  { id:'a1', persons:['Amanda'], title:'Last Date for Items Ordered (Fiscal Year)', month:6, day:1, dayLabel:'1', recurrence:'annual', tags:['budget','finance'], notes:'The last date for items to be ordered for the fiscal year will be June 1st. Not applicable to fall ordering or quick picks for summer.', links:[], history:[] },
+  { id:'a2', persons:['Amanda'], title:'Guest Speaker Lead Time (1 Month)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'1 month lead time needed for guest speakers. Plan accordingly.', links:[], history:[] },
+  { id:'a3', persons:['Amanda'], title:'Service Agreement Lead Time (2 Months)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'2 month lead time needed for service agreements. Plan accordingly.', links:[], history:[] },
+  { id:'a4', persons:['Amanda'], title:'SA Purchases Lead Time (1.5 Months)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'1.5 month lead time needed for SA purchases. Plan accordingly.', links:[], history:[] }
 ];
 
 let tasks = [];
@@ -587,7 +598,7 @@ function filterMonth(f, btn) {
 }
 function visibleTasks() {
   if (currentPersonFilter.has('all')) return tasks;
-  return tasks.filter(t => currentPersonFilter.has(t.person));
+  return tasks.filter(t => (t.persons||['Chair']).some(p => currentPersonFilter.has(p)));
 }
 
 // ── TIMELINE ──────────────────────────────────────────────────────────
@@ -618,10 +629,15 @@ function renderTimeline() {
       const wlbl=document.createElement('div'); wlbl.className='week-label'; wlbl.textContent='W'+(w+1);
       const pills=document.createElement('div'); pills.className='week-pills';
       wp[w].forEach(t => {
+        const persons=t.persons||['Chair'];
         const pill=document.createElement('div');
         pill.className='timeline-pill';
-        pill.setAttribute('data-person', t.person||'Chair');
-        pill.textContent=t.title; pill.title=t.title+' ('+t.person+')';
+        // color border by first person
+        pill.setAttribute('data-person', persons[0]);
+        // dots for each person
+        const dotsHtml=persons.map(p=>`<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--${p.toLowerCase()==='chair'?'chair':p.toLowerCase()==='erin'?'erin':p.toLowerCase()==='connie'?'connie':p.toLowerCase()==='krystina'?'krystina':'amanda'});margin-right:2px;vertical-align:middle;"></span>`).join('');
+        pill.innerHTML=dotsHtml+' '+t.title;
+        pill.title=t.title+' ('+persons.join(', ')+')';
         pill.onclick=()=>openDetail(t.id);
         pills.appendChild(pill);
       });
@@ -652,9 +668,13 @@ function renderCards() {
   if(!filtered.length) { grid.innerHTML='<div class="no-tasks">No deadlines match this filter.</div>'; return; }
   grid.innerHTML=filtered.map(t => {
     const urg=urgencyClass(t), lc=t.links?t.links.length:0, hc=t.history?t.history.length:0;
-    const p=t.person||'Chair';
-    return `<div class="task-card" data-person="${p}" onclick="openDetail('${t.id}')">
-      <div class="card-person" data-person="${p}">${p==='Erin'?'Academic Operations':p==='Connie'?'Scheduling':p==='Krystina'?'Department Coordinator':p==='Amanda'?'Finance':'Chair'}</div>
+    const persons=t.persons||['Chair'];
+    const personLabel = p => p==='Erin'?'Academic Operations':p==='Connie'?'Scheduling':p==='Krystina'?'Department Coordinator':p==='Amanda'?'Finance':'Chair';
+    const personColor = p => p==='Erin'?'var(--erin)':p==='Connie'?'var(--connie)':p==='Krystina'?'var(--krystina)':p==='Amanda'?'var(--amanda)':'var(--chair)';
+    const dotsHtml = persons.map(p=>`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${personColor(p)};margin-right:3px;"></span>`).join('');
+    const labelsHtml = persons.map(p=>`<span style="color:${personColor(p)};font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;">${personLabel(p)}</span>`).join('<span style="color:var(--rule);margin:0 4px;">·</span>');
+    return `<div class="task-card" data-person="${persons[0]}" onclick="openDetail('${t.id}')">
+      <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">${dotsHtml}<div>${labelsHtml}</div></div>
       <div class="card-date">${formatDate(t)} · ${t.recurrence==='varies'?'varies':'annual'}</div>
       <div class="card-title">${t.title}</div>
       <div class="card-meta">${(t.tags||[]).map(tag=>`<span class="tag">${tag}</span>`).join('')}</div>
@@ -668,14 +688,19 @@ function renderCards() {
 function openDetail(id) {
   const task=tasks.find(t=>t.id===id); if(!task) return;
   currentTaskId=id;
-  const urg=urgencyClass(task), p=task.person||'Chair';
+  const urg=urgencyClass(task), persons=task.persons||['Chair'];
+  const personLabel = p => p==='Erin'?'Academic Operations':p==='Connie'?'Scheduling':p==='Krystina'?'Department Coordinator':p==='Amanda'?'Finance':'Chair';
   const bar=document.getElementById('modal-urgency-bar');
-  bar.textContent=(urg==='urgent'?'⚠ Urgent — within 30 days':urg==='soon'?'◉ Coming up — within 90 days':countdownLabel(task))+' · '+(p==='Erin'?'Academic Operations':p==='Connie'?'Scheduling':p==='Krystina'?'Department Coordinator':p==='Amanda'?'Finance':'Chair');
+  bar.textContent=(urg==='urgent'?'⚠ Urgent — within 30 days':urg==='soon'?'◉ Coming up — within 90 days':countdownLabel(task))+' · '+persons.map(personLabel).join(', ');
   bar.style.color=urg==='urgent'?'#b83030':urg==='soon'?'#8a6f20':'var(--muted)';
   document.getElementById('modal-title').textContent=task.title;
   document.getElementById('modal-date').textContent=formatDate(task)+(task.recurrence==='varies'?' — varies by year':' — recurring annually');
   document.getElementById('modal-notes').value=task.notes||'';
   document.getElementById('modal-this-year-date').value=task.thisYearDate||'';
+  // populate persons select
+  const personsSelect=document.getElementById('modal-persons');
+  const taskPersons=task.persons||['Chair'];
+  Array.from(personsSelect.options).forEach(o => o.selected=taskPersons.includes(o.value));
   renderModalLinks(task); renderModalHistory(task);
   document.getElementById('detail-modal').classList.add('open');
 }
@@ -712,6 +737,8 @@ function saveTask() {
   const task=tasks.find(t=>t.id===currentTaskId);
   task.notes=document.getElementById('modal-notes').value;
   task.thisYearDate=document.getElementById('modal-this-year-date').value||null;
+  const selectedPersons=Array.from(document.getElementById('modal-persons').selectedOptions).map(o=>o.value);
+  task.persons=selectedPersons.length?selectedPersons:['Chair'];
   saveTasks(tasks); closeModal('detail-modal'); renderTimeline(); renderCards();
 }
 function deleteTask() {
@@ -724,7 +751,7 @@ function openAddModal() {
   ['new-title','new-day','new-tags','new-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('new-month').value='1';
   document.getElementById('new-recurrence').value='annual';
-  document.getElementById('new-person').value='Chair';
+  Array.from(document.getElementById('new-person').options).forEach(o=>o.selected=false);
   document.getElementById('add-modal').classList.add('open');
 }
 function createTask() {
@@ -735,8 +762,9 @@ function createTask() {
   const recurrence=document.getElementById('new-recurrence').value;
   const tags=document.getElementById('new-tags').value.split(',').map(s=>s.trim()).filter(Boolean);
   const notes=document.getElementById('new-notes').value.trim();
-  const person=document.getElementById('new-person').value;
-  tasks.push({id:'td'+Date.now(),person,title,month,day,dayLabel:dayRaw||'early',recurrence,tags,notes,links:[],history:[]});
+  const persons=Array.from(document.getElementById('new-person').selectedOptions).map(o=>o.value);
+  if(!persons.length){alert('Please select at least one role.');return;}
+  tasks.push({id:'td'+Date.now(),persons,title,month,day,dayLabel:dayRaw||'early',recurrence,tags,notes,links:[],history:[]});
   saveTasks(tasks); closeModal('add-modal'); renderTimeline(); renderCards();
 }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -746,7 +774,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{ o.addEventListener('cli
 function escapeCSV(val) { const s=String(val==null?'':val); return (s.includes(',')||s.includes('"')||s.includes('\n'))?'"'+s.replace(/"/g,'""')+'"':s; }
 function exportCSV() {
   const headers=['id','person','title','month','day','dayLabel','recurrence','tags','notes','thisYearDate','links','history'];
-  const rows=tasks.map(t=>[t.id,t.person||'Chair',t.title,t.month,t.day,t.dayLabel,t.recurrence,(t.tags||[]).join(';'),t.notes||'',t.thisYearDate||'',JSON.stringify(t.links||[]),JSON.stringify(t.history||[])].map(escapeCSV).join(','));
+  const rows=tasks.map(t=>[t.id,(t.persons||['Chair']).join(';'),t.title,t.month,t.day,t.dayLabel,t.recurrence,(t.tags||[]).join(';'),t.notes||'',t.thisYearDate||'',JSON.stringify(t.links||[]),JSON.stringify(t.history||[])].map(escapeCSV).join(','));
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([[headers.join(','),...rows].join('\n')],{type:'text/csv'}));
   a.download='studio-arts-deadlines-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
@@ -761,7 +789,8 @@ function importCSV(event) {
       for(let i=1;i<lines.length;i++) {
         const vals=parseCSVRow(lines[i]); if(vals.length<6) continue;
         const obj={}; headers.forEach((h,idx)=>obj[h]=vals[idx]||'');
-        imported.push({id:obj.id||('td'+Date.now()+i),person:obj.person||'Chair',title:obj.title,month:parseInt(obj.month)||1,day:parseInt(obj.day)||1,dayLabel:obj.dayLabel||'',recurrence:obj.recurrence||'annual',tags:obj.tags?obj.tags.split(';').filter(Boolean):[],notes:obj.notes||'',thisYearDate:obj.thisYearDate||null,links:safeJSON(obj.links,[]),history:safeJSON(obj.history,[])});
+        const personsRaw = obj.persons || obj.person || 'Chair';
+        imported.push({id:obj.id||('td'+Date.now()+i),persons:personsRaw.split(';').filter(Boolean),title:obj.title,month:parseInt(obj.month)||1,day:parseInt(obj.day)||1,dayLabel:obj.dayLabel||'',recurrence:obj.recurrence||'annual',tags:obj.tags?obj.tags.split(';').filter(Boolean):[],notes:obj.notes||'',thisYearDate:obj.thisYearDate||null,links:safeJSON(obj.links,[]),history:safeJSON(obj.history,[])});
       }
       if(!imported.length){alert('No valid rows found.');return;}
       if(!confirm('Import '+imported.length+' deadline(s)? This will replace current data.')) return;
