@@ -175,8 +175,6 @@
   .add-link-row { display: flex; gap: 6px; }
   .add-link-row input { flex: 1; font-family: 'DM Mono', monospace; font-size: 0.68rem; background: var(--paper); border: 1.5px solid var(--rule); padding: 6px 9px; color: var(--ink); }
   .add-link-row input:focus { outline: none; border-color: var(--accent); }
-  .history-entry { padding: 9px 11px; background: var(--paper); border: 1px solid var(--rule); border-left: 3px solid var(--gold); margin-bottom: 7px; font-size: 0.7rem; line-height: 1.5; }
-  .history-year { font-size: 0.56rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
   .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--rule); }
   .btn-sm { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 13px; border: 1.5px solid var(--rule); background: transparent; color: var(--ink); cursor: pointer; transition: all 0.12s; }
   .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
@@ -209,7 +207,7 @@
 <div id="app">
   <header>
     <h1>
-      <span>University of Pittsburgh · Studio Arts · v4</span>
+      <span>University of Pittsburgh · Studio Arts · v5</span>
       Deadline Tracker
     </h1>
     <div class="header-actions">
@@ -314,15 +312,6 @@
           <button class="btn-sm" onclick="addLink()">Add</button>
         </div>
       </div>
-      <div class="modal-section">
-        <div class="modal-section-label">History / Past Examples</div>
-        <div id="modal-history-list"></div>
-        <div style="display:flex;gap:7px;margin-top:7px;">
-          <input type="text" id="new-history-year" placeholder="Year" style="width:80px;font-family:'DM Mono',monospace;font-size:0.68rem;background:var(--paper);border:1.5px solid var(--rule);padding:6px 9px;color:var(--ink);">
-          <input type="text" id="new-history-note" placeholder="Notes from that year..." style="flex:1;font-family:'DM Mono',monospace;font-size:0.68rem;background:var(--paper);border:1.5px solid var(--rule);padding:6px 9px;color:var(--ink);">
-          <button class="btn-sm" onclick="addHistory()">Add</button>
-        </div>
-      </div>
       <div class="modal-actions">
         <button class="btn-sm danger" onclick="deleteTask()">Delete</button>
         <button class="btn-sm" onclick="closeModal('detail-modal')">Cancel</button>
@@ -379,7 +368,7 @@
 </div>
 
 <script>
-const STORAGE_KEY = 'chair_deadlines_v4';
+const STORAGE_KEY = 'chair_deadlines_v5';
 const ACADEMIC_MONTHS = [8,9,10,11,12,1,2,3,4,5,6,7];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -391,7 +380,7 @@ const DEFAULT_TASKS = [
   { id:'td1775961375202', persons:['Chair'], title:'February Faculty Meeting', month:2, day:21, dayLabel:'21', recurrence:'annual', tags:['faculty'], notes:'PDoG', links:[], history:[] },
   { id:'td1775961021066', persons:['Chair','Erin'], title:'PTI Benching and Termination Notice — Email Direct from Chair', month:3, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','contracts','hr'], notes:'', links:[], history:[] },
   { id:'td1775961209140', persons:['Chair'], title:'March Faculty Meeting', month:3, day:1, dayLabel:'third week', recurrence:'annual', tags:['faculty'], notes:'FARS and Workload planning', links:[], history:[] },
-  { id:'td1775961143527', persons:['Chair'], title:'Final Faculty Meeting', month:4, day:21, dayLabel:'21', recurrence:'annual', tags:['faculty'], notes:'Final meeting. FARs and Workload. Need separate voting faculty meeting to discuss hiring requisition', links:[], history:[] },
+  { id:'td1775961143527', persons:['Chair'], title:'Final Faculty Meeting', month:4, day:21, dayLabel:'21', recurrence:'annual', tags:['faculty'], notes:'Final meeting. FARs and Workload. Need separate voting faculty meeting to discuss hiring requisition', thisYearDate:'2026-04-30', links:[{label:'Faculty Activity Report info',url:'https://pitt.sharepoint.com/:b:/r/sites/dsas/humanities/frickfinearts/studioarts/Faculty/Important%20Correspondence/AY%202026/041026-Annual%20Departmental%20and%20FacultyActivity%20Reports%20%20AY202526%20%20Due%20April%2024%20%20May%2015.pdf?csf=1&web=1&e=QlIRxv'}], history:[] },
   { id:'c1', persons:['Chair'], title:'Facilities & Equipment Requests Due', month:1, day:15, dayLabel:'15', recurrence:'annual', tags:['facilities','operations'], notes:"Submit facilities and equipment requests to Dean's office. Date is fixed at Jan 15.", links:[], history:[] },
   { id:'c2', persons:['Chair'], title:'Ancillary Budgets Due', month:3, day:1, dayLabel:'early', recurrence:'annual', tags:['budget','finance'], notes:"Ancillary budget submissions due to A&S. Confirm exact date with Dean's office each year.", links:[], history:[] },
   { id:'c3', persons:['Chair'], title:'Student Exhibition Opens', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['events','exhibitions'], notes:'Annual student exhibition opening. Typically early April.', links:[], history:[] },
@@ -399,7 +388,7 @@ const DEFAULT_TASKS = [
   { id:'c5', persons:['Chair'], title:'Remind Faculty About Graduation', month:4, day:1, dayLabel:'early', recurrence:'annual', tags:['graduation','faculty'], notes:'Send faculty reminder about graduation attendance, roles, and expectations.', links:[], history:[] },
   { id:'c6', persons:['Chair'], title:'Send Departmental & Faculty Activity Reports Info', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','reporting'], notes:'Send out information and instructions to faculty about upcoming departmental and faculty activity reports.', links:[], history:[] },
   { id:'c7', persons:['Chair'], title:'Faculty Actions — Promotion', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','promotion','hr'], notes:'Send out faculty actions related to promotion. Confirm exact process and deadlines with Erin/A&S.', links:[], history:[] },
-  { id:'c10', persons:['Chair'], title:'Submit Departmental Report', month:5, day:1, dayLabel:'1', recurrence:'annual', tags:['reporting','operations'], notes:'Chair submits the departmental report.', links:[], history:[] },
+  { id:'c10', persons:['Chair'], title:'Submit Departmental Report', month:5, day:1, dayLabel:'1', recurrence:'annual', tags:['reporting','operations'], notes:'Chair submits the departmental report.', thisYearDate:'2026-05-01', links:[{label:'2025 DR',url:'https://pitt.sharepoint.com/:b:/r/sites/dsas/humanities/frickfinearts/studioarts/Chair/SA%20Chair%20Business/Department%20Reports/2025%20Dept%20Report/AY2025%20Studio%20Arts%20Department%20Report.pdf?csf=1&web=1&e=L45gTZ'},{label:'2023 DR',url:'https://pitt.sharepoint.com/:b:/r/sites/dsas/humanities/frickfinearts/studioarts/Chair/SA%20Chair%20Business/Department%20Reports/2023%20Dept%20Report/SA%20Department%20Annual%20Report%20AY23.pdf?csf=1&web=1&e=avF7dh'},{label:'2022 DR',url:'https://pitt.sharepoint.com/:b:/r/sites/dsas/humanities/frickfinearts/studioarts/Chair/SA%20Chair%20Business/Department%20Reports/2022%20Dept%20Report/SA%20Department%20Annual%20Report%20AY22.pdf?csf=1&web=1&e=gDbmCG'}], history:[] },
   { id:'c8', persons:['Chair'], title:'Graduation Day & Student Exhibition Closes', month:5, day:2, dayLabel:'2', recurrence:'varies', tags:['graduation','events'], notes:'Graduation typically falls on the first Saturday in May. This year: May 2. Student exhibition closes same day.', links:[], history:[] },
   { id:'c9', persons:['Chair'], title:'Faculty Submit Faculty Activity Reports', month:5, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','reporting'], notes:'Deadline for faculty to submit their Faculty Activity Reports.', links:[], history:[] },
   { id:'c11', persons:['Chair'], title:'Annual Review Letters Due', month:7, day:17, dayLabel:'17', recurrence:'annual', tags:['faculty','review','hr'], notes:'Annual review letters must be sent to faculty by July 17.', links:[], history:[] },
@@ -671,7 +660,7 @@ function renderCards() {
   filtered.sort((a,b)=>getDaysUntil(a)-getDaysUntil(b));
   if(!filtered.length) { grid.innerHTML='<div class="no-tasks">No deadlines match this filter.</div>'; return; }
   grid.innerHTML=filtered.map(t => {
-    const urg=urgencyClass(t), lc=t.links?t.links.length:0, hc=t.history?t.history.length:0;
+    const urg=urgencyClass(t), lc=t.links?t.links.length:0;
     const persons=t.persons||['Chair'];
     const personLabel = p => p==='Erin'?'Academic Operations':p==='Connie'?'Scheduling':p==='Krystina'?'Department Coordinator':p==='Amanda'?'Finance':'Chair';
     const personColor = p => p==='Erin'?'var(--erin)':p==='Connie'?'var(--connie)':p==='Krystina'?'var(--krystina)':p==='Amanda'?'var(--amanda)':'var(--chair)';
@@ -683,7 +672,7 @@ function renderCards() {
       <div class="card-title">${t.title}</div>
       <div class="card-meta">${(t.tags||[]).map(tag=>`<span class="tag">${tag}</span>`).join('')}</div>
       <div class="countdown ${urg}">${countdownLabel(t)}</div>
-      ${lc||hc?`<div class="card-links-preview">${lc?`↗ ${lc} link${lc>1?'s':''}`:''}${lc&&hc?' · ':''}${hc?`📋 ${hc} yr${hc>1?'s':''} on record`:''}</div>`:''}
+      ${lc?`<div class="card-links-preview">↗ ${lc} link${lc>1?'s':''}</div>`:''}
     </div>`;
   }).join('');
 }
@@ -705,7 +694,7 @@ function openDetail(id) {
   const personsSelect=document.getElementById('modal-persons');
   const taskPersons=task.persons||['Chair'];
   Array.from(personsSelect.options).forEach(o => o.selected=taskPersons.includes(o.value));
-  renderModalLinks(task); renderModalHistory(task);
+  renderModalLinks(task);
   document.getElementById('detail-modal').classList.add('open');
 }
 
@@ -713,11 +702,6 @@ function renderModalLinks(task) {
   const list=document.getElementById('modal-links-list');
   if(!task.links||!task.links.length){list.innerHTML='<div style="font-size:0.7rem;color:var(--muted);padding:4px 0;">No links yet.</div>';return;}
   list.innerHTML=task.links.map((lk,i)=>`<div class="link-item"><span class="link-label">${lk.label}</span><a href="${lk.url}" target="_blank">${lk.url}</a><button class="link-delete" onclick="removeLink(${i})">✕</button></div>`).join('');
-}
-function renderModalHistory(task) {
-  const list=document.getElementById('modal-history-list');
-  if(!task.history||!task.history.length){list.innerHTML='<div style="font-size:0.7rem;color:var(--muted);padding:4px 0;">No historical records yet.</div>';return;}
-  list.innerHTML=[...task.history].reverse().map(h=>`<div class="history-entry"><div class="history-year">${h.year}</div><div>${h.note}</div></div>`).join('');
 }
 function addLink() {
   const label=document.getElementById('new-link-label').value.trim(), url=document.getElementById('new-link-url').value.trim();
@@ -728,14 +712,6 @@ function addLink() {
   renderModalLinks(task);
 }
 function removeLink(idx) { const task=tasks.find(t=>t.id===currentTaskId); task.links.splice(idx,1); renderModalLinks(task); }
-function addHistory() {
-  const year=document.getElementById('new-history-year').value.trim(), note=document.getElementById('new-history-note').value.trim();
-  if(!note) return;
-  const task=tasks.find(t=>t.id===currentTaskId); if(!task.history) task.history=[];
-  task.history.push({year:year||'—',note});
-  document.getElementById('new-history-year').value=''; document.getElementById('new-history-note').value='';
-  renderModalHistory(task);
-}
 function clearThisYearDate() { document.getElementById('modal-this-year-date').value=''; }
 function saveTask() {
   const task=tasks.find(t=>t.id===currentTaskId);
