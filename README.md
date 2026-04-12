@@ -1,2 +1,2 @@
 # studio-arts-deadlines
-deadline tracker for chair
+deadline tracker for studio arts administration and staff
