@@ -25,7 +25,7 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--paper); color: var(--ink); font-family: 'DM Mono', monospace; min-height: 100vh; }
-
+ 
   /* LOCK */
   #lock-screen {
     position: fixed; inset: 0; background: #1a1714; z-index: 9999;
@@ -47,10 +47,10 @@
   }
   #lock-btn:hover { background: #9a4a20; }
   #lock-error { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: #b83030; min-height: 16px; }
-
+ 
   /* APP */
   #app { display: none; }
-
+ 
   /* HEADER */
   header {
     background: var(--ink); color: var(--paper); padding: 24px 40px 20px;
@@ -64,7 +64,7 @@
   .btn:hover { background: var(--accent); border-color: var(--accent); }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
   .btn.primary:hover { background: #9a4a20; }
-
+ 
   /* PERSON FILTER BAR */
   #person-bar {
     background: var(--ink); padding: 0 40px 16px;
@@ -86,7 +86,7 @@
   .person-btn[data-person="Connie"].active { border-color: var(--connie); background: rgba(106,158,90,0.2); }
   .person-btn[data-person="Krystina"].active { border-color: var(--krystina); background: rgba(154,90,184,0.2); }
   .person-btn[data-person="Amanda"].active { border-color: var(--amanda); background: rgba(184,136,90,0.2); }
-
+ 
   /* TIMELINE */
   #timeline-section { padding: 30px 40px 0; }
   .section-label { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
@@ -119,7 +119,7 @@
   .timeline-pill[data-person="Connie"] { border-left-color: var(--connie); }
   .timeline-pill[data-person="Krystina"] { border-left-color: var(--krystina); }
   .timeline-pill[data-person="Amanda"] { border-left-color: var(--amanda); }
-
+ 
   /* CARDS */
   #cards-section { padding: 36px 40px 60px; }
   .cards-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
@@ -151,7 +151,7 @@
   .countdown.soon { color: #8a6f20; }
   .card-links-preview { margin-top: 8px; font-size: 0.58rem; color: var(--muted); }
   .no-tasks { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 0.8rem; }
-
+ 
   /* MODALS */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,23,20,0.7); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
@@ -193,7 +193,7 @@
 </style>
 </head>
 <body>
-
+ 
 <!-- LOCK SCREEN -->
 <div id="lock-screen">
   <h2>Department Chair</h2>
@@ -202,12 +202,12 @@
   <button id="lock-btn">Unlock</button>
   <div id="lock-error"></div>
 </div>
-
+ 
 <!-- MAIN APP -->
 <div id="app">
   <header>
     <h1>
-      <span>University of Pittsburgh · Studio Arts · v5.1</span>
+      <span>University of Pittsburgh · Studio Arts · v6.1</span>
       Deadline Tracker
     </h1>
     <div class="header-actions">
@@ -216,7 +216,7 @@
       <button class="btn primary" onclick="openAddModal()">+ Add Deadline</button>
     </div>
   </header>
-
+ 
   <!-- PERSON FILTER -->
   <div id="person-bar">
     <span class="person-label">View:</span>
@@ -239,7 +239,7 @@
       <span class="dot" style="background:var(--amanda)"></span>Finance
     </button>
   </div>
-
+ 
   <section id="timeline-section">
     <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="toggleSection('timeline')">
       <span>Annual Timeline — Academic Year (Aug → Jul)</span>
@@ -253,7 +253,7 @@
       </div>
     </div>
   </section>
-
+ 
   <section id="cards-section">
     <div class="cards-header">
       <div class="section-label" style="margin:0">All Deadlines</div>
@@ -280,7 +280,7 @@
       <div class="cards-grid" id="cards-grid"></div>
     </div>
   </section>
-
+ 
   <!-- DETAIL MODAL -->
   <div class="modal-overlay" id="detail-modal">
     <div class="modal">
@@ -327,7 +327,7 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- ADD MODAL -->
   <div class="modal-overlay" id="add-modal">
     <div class="modal">
@@ -374,10 +374,10 @@
     </div>
   </div>
 </div>
-
+ 
 <script>
 const sectionState = { timeline: true, cards: true };
-
+ 
 function toggleSection(id) {
   sectionState[id] = !sectionState[id];
   const body = document.getElementById(id + '-body');
@@ -390,7 +390,7 @@ function toggleSection(id) {
     toggle.textContent = '▼ Expand';
   }
 }
-
+ 
 function refreshSectionHeights() {
   ['timeline','cards'].forEach(id => {
     if (!sectionState[id]) return;
@@ -405,14 +405,22 @@ function initSections() {
     body.style.maxHeight = body.scrollHeight + 'px';
   });
 }
+const STORAGE_KEY = 'chair_deadlines_v6';
 const ACADEMIC_MONTHS = [8,9,10,11,12,1,2,3,4,5,6,7];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-
+ 
 const DEFAULT_TASKS = [
   // ── CHAIR ──
   { id:'c13', persons:['Chair'], title:'Faculty Retreat', month:8, day:19, dayLabel:'19', recurrence:'varies', tags:['faculty','academic'], notes:'Faculty retreat held on the Wednesday of the week before classes begin. This year: August 19.', links:[], history:[] },
   { id:'c12', persons:['Chair'], title:'Classes Begin', month:8, day:24, dayLabel:'24', recurrence:'varies', tags:['academic'], notes:"First day of classes. Date varies slightly each year.", links:[], history:[] },
+  { id:'td1776731163668', persons:['Chair'], title:'Write Graduation Speech', month:4, day:21, dayLabel:'21', recurrence:'annual', tags:['graduation','communications'], notes:'', links:[], history:[] },
+  { id:'td1776816754217', persons:['Chair','Krystina'], title:'Senior Exhibition Catalogue Submit', month:4, day:15, dayLabel:'15', recurrence:'annual', tags:['exhibitions','communications'], notes:'', links:[], history:[] },
+  { id:'td1776816824295', persons:['Chair'], title:'Chair Letter Due', month:5, day:7, dayLabel:'7', recurrence:'annual', tags:['faculty','reporting'], notes:'', links:[], history:[] },
+  { id:'td1776887588122', persons:['Chair','Krystina'], title:'Fall Course Advertisements', month:3, day:15, dayLabel:'15', recurrence:'annual', tags:['academic','communications'], notes:'', links:[], history:[] },
+  { id:'td1776887626143', persons:['Chair','Krystina'], title:'Spring Course Advertisements', month:9, day:15, dayLabel:'15', recurrence:'annual', tags:['academic','communications'], notes:'', links:[], history:[] },
+  { id:'td1776887663614', persons:['Chair','Krystina'], title:'Course Fees Update', month:5, day:15, dayLabel:'15', recurrence:'annual', tags:['academic','finance'], notes:'', links:[], history:[] },
+  { id:'td1776182981281', persons:['Chair','Krystina'], title:'Facility Request Response', month:4, day:25, dayLabel:'25', recurrence:'annual', tags:['facilities','operations'], notes:'', thisYearDate:'2026-05-10', links:[], history:[] },
   { id:'td1775961375202', persons:['Chair'], title:'February Faculty Meeting', month:2, day:21, dayLabel:'21', recurrence:'annual', tags:['faculty'], notes:'PDoG', links:[], history:[] },
   { id:'td1775961021066', persons:['Chair','Erin'], title:'PTI Benching and Termination Notice — Email Direct from Chair', month:3, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','contracts','hr'], notes:'', links:[], history:[] },
   { id:'td1775961209140', persons:['Chair'], title:'March Faculty Meeting', month:3, day:1, dayLabel:'third week', recurrence:'annual', tags:['faculty'], notes:'FARS and Workload planning', links:[], history:[] },
@@ -428,8 +436,21 @@ const DEFAULT_TASKS = [
   { id:'c8', persons:['Chair'], title:'Graduation Day & Student Exhibition Closes', month:5, day:2, dayLabel:'2', recurrence:'varies', tags:['graduation','events'], notes:'Graduation typically falls on the first Saturday in May. This year: May 2. Student exhibition closes same day.', links:[], history:[] },
   { id:'c9', persons:['Chair'], title:'Faculty Submit Faculty Activity Reports', month:5, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','reporting'], notes:'Deadline for faculty to submit their Faculty Activity Reports.', links:[], history:[] },
   { id:'c11', persons:['Chair'], title:'Annual Review Letters Due', month:7, day:17, dayLabel:'17', recurrence:'annual', tags:['faculty','review','hr'], notes:'Annual review letters must be sent to faculty by July 17.', links:[], history:[] },
-
+ 
   // ── ERIN — AOM ──
+  { id:'e38', persons:['Erin'], title:'PTI Non-Renewal Notifications Due', month:4, day:1, dayLabel:'1', recurrence:'annual', tags:['faculty','contracts','hr'], notes:'Deadline for non-renewal notifications to be sent out to part-time faculty. Part-time non-renewal notice for April 1.', thisYearDate:'2026-04-01', links:[], history:[] },
+  { id:'e39', persons:['Erin'], title:'Begin Ancillary Budget Spending Update (Spring)', month:4, day:15, dayLabel:'15', recurrence:'annual', tags:['budget'], notes:'Start updating the Ancillary Budget Spending for Spring. Full deadline is April 30th at 5:00 PM.', thisYearDate:'2026-04-15', links:[], history:[] },
+  { id:'e40', persons:['Erin'], title:'Non-Renewal/Benching Packets to PC', month:4, day:24, dayLabel:'24', recurrence:'annual', tags:['faculty','contracts','hr'], notes:'Non-renewal/benching notification packets should be in Perceptive Content and assigned to "Dept Payroll". Related to part-time non-renewal notice for April 1.', thisYearDate:'2026-04-24', links:[], history:[] },
+  { id:'e41', persons:['Erin'], title:'Ancillary Budget Spending Update Due (Spring)', month:4, day:30, dayLabel:'30', recurrence:'annual', tags:['budget'], notes:'Deadline to complete the Ancillary Budget Spending for Spring. Deadline is April 30th at 5:00 PM.', thisYearDate:'2026-04-30', links:[], history:[] },
+  { id:'e42', persons:['Erin'], title:'PT Faculty Annual Reports Deadline (Unit Heads)', month:4, day:30, dayLabel:'30', recurrence:'annual', tags:['faculty','reporting'], notes:'All part-time faculty must be given the opportunity to submit an annual report. PT faculty should submit reports to unit heads by April 30th, but no later than May 15th. All other reports due May 15th. (Annual Performance Review of Faculty Members)', thisYearDate:'2026-04-30', links:[], history:[] },
+  { id:'e43', persons:['Erin'], title:'Department/Program/Center Annual Report Due', month:5, day:1, dayLabel:'1', recurrence:'annual', tags:['reporting'], notes:'AY 2025-2026 Annual Department, Program, and Center Report due. Note: overlaps with Chair\'s departmental report submission.', thisYearDate:'2026-05-01', links:[], history:[] },
+  { id:'e44', persons:['Erin'], title:'Annual Reports Due — Chairs, Distinguished Faculty, UCIS Directors', month:5, day:8, dayLabel:'8', recurrence:'annual', tags:['faculty','reporting'], notes:'Annual Reports for Chairs (current and incoming), Distinguished/Named/Endowed faculty, UCIS Directors and any other direct reports to the Dean. (AY2025-2026 Request for Personal Annual Reports and Letters)', thisYearDate:'2026-05-08', links:[], history:[] },
+  { id:'e45', persons:['Erin'], title:'Orosz Award & Dean\'s Achievement Awards', month:5, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','awards'], notes:'Orosz Award for Excellence in Emerging Leadership and Dean\'s Achievement Awards deadline.', thisYearDate:'2026-05-15', links:[], history:[] },
+  { id:'e46', persons:['Erin'], title:'All Faculty Annual Reports Due', month:5, day:15, dayLabel:'15', recurrence:'annual', tags:['faculty','reporting'], notes:'Final deadline for all faculty annual reports. Part-time faculty should have submitted to unit heads by April 30th. All other reports due by May 15th. (Annual Performance Review of Faculty Members)', thisYearDate:'2026-05-15', links:[], history:[] },
+  { id:'e47', persons:['Erin'], title:'Chair Letters Due — Distinguished Faculty & Direct Reports to Dean', month:6, day:5, dayLabel:'5', recurrence:'annual', tags:['faculty','reporting'], notes:'Chair letters for incoming chairs, Distinguished/Named/Endowed faculty, UCIS Directors and any other direct reports to the Dean. (AY2025-2026 Request for Personal Annual Reports and Letters)', thisYearDate:'2026-06-05', links:[], history:[] },
+  { id:'e48', persons:['Erin'], title:'Faculty Evaluations Sent to All Faculty', month:7, day:17, dayLabel:'17', recurrence:'annual', tags:['faculty','review'], notes:'All AY26 Faculty Evaluations should be sent out to faculty including full-time, PT, and Visitors. (Annual Performance Review of Faculty Members)', thisYearDate:'2026-07-17', links:[], history:[] },
+  { id:'e49', persons:['Erin'], title:'Faculty Evaluations Submitted to Perceptive Content', month:8, day:7, dayLabel:'7', recurrence:'annual', tags:['faculty','review'], notes:'All faculty evaluations should be submitted to Perceptive Content. (Annual Performance Review of Faculty Members)', thisYearDate:'2026-08-07', links:[], history:[] },
+  { id:'e50', persons:['Erin'], title:'Promotion CVs Due to Jennifer Bates', month:8, day:31, dayLabel:'31', recurrence:'annual', tags:['faculty','promotion'], notes:'Send an updated curriculum vitae for each Associate Professor or Full Professor promotion candidate to Jennifer Bates. (Deadlines for Faculty Promotions 2026-2027)', thisYearDate:'2026-08-31', links:[], history:[] },
   { id:'e1', persons:['Erin'], title:'Recruitment — Interviews & Campus Visits', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment','faculty'], notes:'Interviews and campus visits through the spring term.', links:[], history:[] },
   { id:'e2', persons:['Erin'], title:'Appointment Stream — Promotion Cases', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Appt stream promotion cases active in January.', links:[], history:[] },
   { id:'e3', persons:['Erin'], title:'Renewal for Visiting Lecturers', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','hr'], notes:'Process renewals for Visiting Lecturers.', links:[], history:[] },
@@ -467,7 +488,7 @@ const DEFAULT_TASKS = [
   { id:'e35', persons:['Erin'], title:'Promotion to Full Dossiers Due to Jenn Bates', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['promotion','faculty'], notes:'Promotion to full dossiers due to Jenn Bates.', links:[], history:[] },
   { id:'e36', persons:['Erin'], title:'Recommendations for TS Assistant Professors (3rd Year)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['tenure','hr'], notes:'Recommendations for renewal of TS assistant professors completing 3rd year of service.', links:[], history:[] },
   { id:'e37', persons:['Erin'], title:'PTI Contracts Uploaded to PC (December)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts should be uploaded to PC.', links:[], history:[] },
-
+ 
   // ── CONNIE — SCHEDULING ──
   { id:'s1', persons:['Connie'], title:'Spring Class Section Updates Window Opens', month:6, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'Beginning of June — the spring class section updates window opens.', links:[], history:[] },
   { id:'s2', persons:['Connie'], title:'Fall Course Catalog Updates Due in Curriculog', month:6, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling','curriculog'], notes:'Third week in June — the fall course catalog updates due in Curriculog.', links:[], history:[] },
@@ -481,7 +502,7 @@ const DEFAULT_TASKS = [
   { id:'s10', persons:['Connie'], title:'Course Catalog Updates Due in Curriculog (Fall)', month:12, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling','curriculog'], notes:'Beginning of December, the course catalog updates are due in Curriculog.', links:[], history:[] },
   { id:'s11', persons:['Connie'], title:'Fall Class Section Update Deadline', month:1, day:1, dayLabel:'early', recurrence:'annual', tags:['scheduling'], notes:'At the beginning of January is the class section update deadline.', links:[], history:[] },
   { id:'s12', persons:['Connie'], title:'Fall Room Assignments Workflow Opens', month:2, day:1, dayLabel:'W3', recurrence:'annual', tags:['scheduling'], notes:'On the third week in February the class section workflow opens with room assignments.', links:[], history:[] },
-
+ 
   // ── KRYSTINA — DC ──
   { id:'k1', persons:['Krystina'], title:'Recruitment — Arranging Campus Visits', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['recruitment'], notes:'Arranging campus visits for recruitment.', links:[], history:[] },
   { id:'k2', persons:['Krystina'], title:'Prep & Planning for Graduation', month:1, day:1, dayLabel:'throughout', recurrence:'annual', tags:['graduation'], notes:'Graduation prep and planning begins in January and continues through May.', links:[], history:[] },
@@ -513,19 +534,19 @@ const DEFAULT_TASKS = [
   { id:'k28', persons:['Krystina'], title:'PTI Contracts Signed & Uploaded to PC (December)', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['faculty','contracts'], notes:'PTI contracts signed and uploaded to PC.', links:[], history:[] },
   { id:'k29', persons:['Krystina'], title:'Swipe Access Removed from Students (After Finals)', month:12, day:1, dayLabel:'end', recurrence:'annual', tags:['operations','students'], notes:'Swipe access removed from students following finals week.', links:[], history:[] },
   { id:'k30', persons:['Krystina'], title:'Spring Memo Drafting & Collaboration', month:12, day:1, dayLabel:'throughout', recurrence:'annual', tags:['communications'], notes:'Spring memo drafting and collaboration — to be sent prior to winter break.', links:[], history:[] },
-
+ 
   // ── AMANDA — FINANCE ──
   { id:'a1', persons:['Amanda'], title:'Last Date for Items Ordered (Fiscal Year)', month:6, day:1, dayLabel:'1', recurrence:'annual', tags:['budget','finance'], notes:'The last date for items to be ordered for the fiscal year will be June 1st. Not applicable to fall ordering or quick picks for summer.', links:[], history:[] },
   { id:'a2', persons:['Amanda'], title:'Guest Speaker Lead Time (1 Month)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'1 month lead time needed for guest speakers. Plan accordingly.', links:[], history:[] },
   { id:'a3', persons:['Amanda'], title:'Service Agreement Lead Time (2 Months)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'2 month lead time needed for service agreements. Plan accordingly.', links:[], history:[] },
   { id:'a4', persons:['Amanda'], title:'SA Purchases Lead Time (1.5 Months)', month:1, day:1, dayLabel:'ongoing', recurrence:'annual', tags:['finance','planning'], notes:'1.5 month lead time needed for SA purchases. Plan accordingly.', links:[], history:[] }
 ];
-
+ 
 let tasks = [];
 let currentTaskId = null;
 let currentMonthFilter = 'all';
 let currentPersonFilter = new Set(['all']);
-
+ 
 // ── FILTERS ───────────────────────────────────────────────────────────
 function filterPerson(p, btn) {
   if (p === 'all') {
@@ -575,14 +596,14 @@ function filterPerson(p, btn) {
     document.addEventListener('DOMContentLoaded', () => document.getElementById('lock-input').focus());
   }
 })();
-
+ 
 // ── DATA ──────────────────────────────────────────────────────────────
 function loadTasks() {
   try { const r = localStorage.getItem(STORAGE_KEY); if(r) return JSON.parse(r); } catch(e) {}
   return JSON.parse(JSON.stringify(DEFAULT_TASKS));
 }
 function saveTasks(t) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(t)); } catch(e) {} }
-
+ 
 // ── UTILITIES ─────────────────────────────────────────────────────────
 function getTargetDate(task) {
   if (task.thisYearDate) {
@@ -617,7 +638,7 @@ function taskWeek(task) {
   if(dl==='throughout') return 0;
   return dayToWeek(task.day);
 }
-
+ 
 // ── MONTH FILTER & VISIBLE ────────────────────────────────────────────
 function filterMonth(f, btn) {
   currentMonthFilter = f;
@@ -629,7 +650,7 @@ function visibleTasks() {
   if (currentPersonFilter.has('all')) return tasks;
   return tasks.filter(t => (t.persons||['Chair']).some(p => currentPersonFilter.has(p)));
 }
-
+ 
 // ── TIMELINE ──────────────────────────────────────────────────────────
 function renderTimeline() {
   const container = document.getElementById('timeline');
@@ -683,7 +704,7 @@ function renderTimeline() {
     container.appendChild(marker);
   }
 }
-
+ 
 // ── CARDS ─────────────────────────────────────────────────────────────
 function renderCards() {
   const grid=document.getElementById('cards-grid');
@@ -712,7 +733,7 @@ function renderCards() {
     </div>`;
   }).join('');
 }
-
+ 
 // ── DETAIL MODAL ──────────────────────────────────────────────────────
 function openDetail(id) {
   const task=tasks.find(t=>t.id===id); if(!task) return;
@@ -733,7 +754,7 @@ function openDetail(id) {
   renderModalLinks(task);
   document.getElementById('detail-modal').classList.add('open');
 }
-
+ 
 function renderModalLinks(task) {
   const list=document.getElementById('modal-links-list');
   if(!task.links||!task.links.length){list.innerHTML='<div style="font-size:0.7rem;color:var(--muted);padding:4px 0;">No links yet.</div>';return;}
@@ -761,7 +782,7 @@ function deleteTask() {
   if(!confirm('Delete this deadline?')) return;
   tasks=tasks.filter(t=>t.id!==currentTaskId); saveTasks(tasks); closeModal('detail-modal'); renderTimeline(); renderCards(); setTimeout(refreshSectionHeights, 50);
 }
-
+ 
 // ── ADD MODAL ─────────────────────────────────────────────────────────
 function openAddModal() {
   ['new-title','new-day','new-tags','new-notes'].forEach(id=>document.getElementById(id).value='');
@@ -785,7 +806,7 @@ function createTask() {
 }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(o=>{ o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}); });
-
+ 
 // ── CSV ───────────────────────────────────────────────────────────────
 function escapeCSV(val) { const s=String(val==null?'':val); return (s.includes(',')||s.includes('"')||s.includes('\n'))?'"'+s.replace(/"/g,'""')+'"':s; }
 function exportCSV() {
@@ -828,7 +849,7 @@ function parseCSVRow(row) {
   result.push(cur); return result;
 }
 function safeJSON(str,fallback){try{return JSON.parse(str);}catch(e){return fallback;}}
-
+ 
 // ── INIT ──────────────────────────────────────────────────────────────
 function initApp() {
   tasks=loadTasks();
